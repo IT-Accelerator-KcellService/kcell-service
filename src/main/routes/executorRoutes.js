@@ -1,0 +1,19 @@
+// backend/routes/executorRoutes.js
+import { Router } from "express"
+import ExecutorController from "../controllers/executorController.js"
+import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"
+
+const router = Router()
+
+router.get(
+  "/",
+  authenticateToken,
+  authorizeRoles("admin-worker", "department-head", "manager"),
+  ExecutorController.getAllExecutors,
+)
+router.get("/:id", authenticateToken, ExecutorController.getExecutorById)
+router.post("/", authenticateToken, authorizeRoles("admin-worker", "manager"), ExecutorController.createExecutor)
+router.put("/:id", authenticateToken, authorizeRoles("admin-worker", "manager"), ExecutorController.updateExecutor)
+router.delete("/:id", authenticateToken, authorizeRoles("admin-worker", "manager"), ExecutorController.deleteExecutor)
+
+export default router
