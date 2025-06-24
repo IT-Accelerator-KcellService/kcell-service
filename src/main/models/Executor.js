@@ -12,9 +12,7 @@ export const Executor = sequelize.define('Executor', {
             key: 'id'
         }
     },
-    specialty: { type: DataTypes.STRING(100), allowNull: false },
-    rating: { type: DataTypes.DECIMAL(2, 1), defaultValue: 0.0 },
-    workload: { type: DataTypes.INTEGER, defaultValue: 0 }
+    specialty: { type: DataTypes.STRING(100), allowNull: false }
 }, {
     tableName: 'executors',
     timestamps: false
