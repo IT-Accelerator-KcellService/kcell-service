@@ -1,5 +1,5 @@
 import {generateToken, setTokenCookie} from "../utils/jwt/JwtService.js";
-import {comparePassword, getHashedPassword} from "../utils/bcrypt/BCryptService.js";
+import {comparePassword} from "../utils/bcrypt/BCryptService.js";
 import {User} from "../models/init.js";
 
 class AuthService {
