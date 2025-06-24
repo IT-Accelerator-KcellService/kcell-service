@@ -1,65 +1,35 @@
 import ServiceCategoryService from "../services/serviceCategoryService.js"
+import {asyncHandler} from "../middleware/asyncHandler.js";
+import {validateId} from "../middleware/validate.js";
 
 class ServiceCategoryController {
-  static async getAllServiceCategories(req, res) {
-    try {
-      const categories = await ServiceCategoryService.getAllServiceCategories()
-      res.json(categories)
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static getAllServiceCategories = asyncHandler(async (req, res) => {
+    const categories = await ServiceCategoryService.getAllServiceCategories()
+    res.json(categories)
+  })
 
-  static async getServiceCategoryById(req, res) {
-    try {
-      const category = await ServiceCategoryService.getServiceCategoryById(Number.parseInt(req.params.id))
-      if (category) {
-        res.json(category)
-      } else {
-        res.status(404).json({ message: "Service category not found" })
-      }
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static getServiceCategoryById = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id)
+    const category = await ServiceCategoryService.getServiceCategoryById(id);
+    res.json(category);
+  });
 
-  static async createServiceCategory(req, res) {
-    try {
-      const newCategory = await ServiceCategoryService.createServiceCategory(req.body)
-      res.status(201).json(newCategory)
-    } catch (error) {
-      res.status(400).json({ message: error.message })
-    }
-  }
+  static createServiceCategory = asyncHandler(async (req, res) => {
+    const newCategory = await ServiceCategoryService.createServiceCategory(req.body);
+    res.status(201).json(newCategory);
+  });
 
-  static async updateServiceCategory(req, res) {
-    try {
-      const updatedCategory = await ServiceCategoryService.updateServiceCategory(
-        Number.parseInt(req.params.id),
-        req.body,
-      )
-      if (updatedCategory) {
-        res.json(updatedCategory)
-      } else {
-        res.status(404).json({ message: "Service category not found" })
-      }
-    } catch (error) {
-      res.status(400).json({ message: error.message })
-    }
-  }
+  static updateServiceCategory = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id)
+    const updatedCategory = await ServiceCategoryService.updateServiceCategory(id, req.body);
+    res.json(updatedCategory);
+  });
 
-  static async deleteServiceCategory(req, res) {
-    try {
-      const deleted = await ServiceCategoryService.deleteServiceCategory(Number.parseInt(req.params.id))
-      if (deleted) {
-        res.status(204).send()
-      } else {
-        res.status(404).json({ message: "Service category not found" })
-      }
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static deleteServiceCategory = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id)
+    await ServiceCategoryService.deleteServiceCategory(id);
+    res.status(204).send();
+  });
 }
 
 export default ServiceCategoryController

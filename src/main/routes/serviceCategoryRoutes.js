@@ -1,6 +1,8 @@
 import { Router } from "express"
 import ServiceCategoryController from "../controllers/serviceCategoryController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"
+import {validateBody} from "../middleware/validate.js";
+import {ServiceCategoryDto} from "../dto/ServiceCategory.dto.js";
 
 const router = Router()
 
@@ -10,12 +12,14 @@ router.post(
   "/",
   authenticateToken,
   authorizeRoles("admin-worker", "manager"),
+  validateBody(ServiceCategoryDto),
   ServiceCategoryController.createServiceCategory,
 )
 router.put(
   "/:id",
   authenticateToken,
   authorizeRoles("admin-worker", "manager"),
+  validateBody(ServiceCategoryDto),
   ServiceCategoryController.updateServiceCategory,
 )
 router.delete(
