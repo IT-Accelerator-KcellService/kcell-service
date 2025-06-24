@@ -1,0 +1,284 @@
+openapi: 3.1.0
+info:
+  title: Kcell Service Backend API
+  description: API documentation for Kcell Service platform
+  version: 1.0.0
+servers:
+  - url: https://api.kcell-service.kz
+paths:
+  /api/auth/login:
+    post:
+      summary: Login user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required: [email, password]
+      responses:
+        '200':
+          description: Successful login
+        '401':
+          description: Invalid credentials
+
+  /api/service-categories:
+    get:
+      summary: Get all service categories
+      tags: [ServiceCategory]
+      responses:
+        '200':
+          description: A list of service categories
+    post:
+      summary: Create a new service category
+      tags: [ServiceCategory]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCategory'
+      responses:
+        '201':
+          description: Created
+
+  /api/service-categories/{id}:
+    get:
+      summary: Get a service category by ID
+      tags: [ServiceCategory]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found
+        '404':
+          description: Not found
+    put:
+      summary: Update a service category
+      tags: [ServiceCategory]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCategory'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete a service category
+      tags: [ServiceCategory]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+
+  /api/offices:
+    get:
+      summary: Get all offices
+      tags: [Office]
+      responses:
+        '200':
+          description: A list of offices
+    post:
+      summary: Create a new office
+      tags: [Office]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Office'
+      responses:
+        '201':
+          description: Created
+
+  /api/offices/{id}:
+    get:
+      summary: Get an office by ID
+      tags: [Office]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found
+        '404':
+          description: Not found
+    put:
+      summary: Update an office
+      tags: [Office]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Office'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete an office
+      tags: [Office]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+
+  /api/users:
+    get:
+      summary: Get all users
+      tags: [User]
+      responses:
+        '200':
+          description: A list of users
+    post:
+      summary: Create a new user
+      tags: [User]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Created
+
+  /api/users/{id}:
+    get:
+      summary: Get a user by ID
+      tags: [User]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found
+        '404':
+          description: Not found
+    put:
+      summary: Update a user
+      tags: [User]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete a user
+      tags: [User]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+
+  /api/chat-messages/request/{requestId}:
+    get:
+      summary: Get chat messages by request ID
+      tags: [ChatMessage]
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of chat messages related to a request
+        '404':
+          description: Request not found
+
+components:
+  schemas:
+    ServiceCategory:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    Office:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+      required:
+        - name
+        - address
+        - city
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        full_name:
+          type: string
+        office_id:
+          type: integer
+      required:
+        - email
+        - password
+        - full_name
+        - office_id
