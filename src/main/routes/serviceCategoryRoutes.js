@@ -1,4 +1,3 @@
-// backend/routes/serviceCategoryRoutes.js
 import { Router } from "express"
 import ServiceCategoryController from "../controllers/serviceCategoryController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"

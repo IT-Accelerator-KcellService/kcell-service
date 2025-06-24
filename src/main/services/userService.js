@@ -1,4 +1,3 @@
-// backend/services/userService.js
 import {User} from "../models/init.js"
 
 class UserService {

@@ -1,4 +1,3 @@
-// backend/routes/requestPhotoRoutes.js
 import { Router } from "express"
 import RequestPhotoController from "../controllers/requestPhotoController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"

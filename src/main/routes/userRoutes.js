@@ -1,4 +1,3 @@
-// backend/routes/userRoutes.js
 import { Router } from "express"
 import UserController from "../controllers/userController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"

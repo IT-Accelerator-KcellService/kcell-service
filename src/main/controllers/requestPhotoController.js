@@ -1,4 +1,3 @@
-// backend/controllers/requestPhotoController.js
 import RequestPhotoService from "../services/requestPhotoService.js"
 
 class RequestPhotoController {

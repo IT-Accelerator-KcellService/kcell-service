@@ -1,4 +1,3 @@
-// backend/controllers/officeController.js
 import OfficeService from "../services/officeService.js"
 
 class OfficeController {

@@ -1,4 +1,3 @@
-// backend/routes/officeRoutes.js
 import { Router } from "express"
 import OfficeController from "../controllers/officeController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"

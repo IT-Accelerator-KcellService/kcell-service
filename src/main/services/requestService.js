@@ -1,4 +1,3 @@
-// backend/services/requestService.js
 import {Request} from "../models/init.js"
 
 class RequestService {

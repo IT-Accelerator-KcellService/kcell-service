@@ -1,4 +1,3 @@
-// backend/controllers/requestController.js
 import RequestService from "../services/requestService.js"
 
 class RequestController {

@@ -1,4 +1,3 @@
-// backend/routes/requestRoutes.js
 import { Router } from "express"
 import RequestController from "../controllers/requestController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"

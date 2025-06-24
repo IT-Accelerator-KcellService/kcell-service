@@ -1,4 +1,3 @@
-// backend/routes/executorRoutes.js
 import { Router } from "express"
 import ExecutorController from "../controllers/executorController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"

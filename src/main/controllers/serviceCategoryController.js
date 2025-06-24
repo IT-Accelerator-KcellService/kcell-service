@@ -1,4 +1,3 @@
-// backend/controllers/serviceCategoryController.js
 import ServiceCategoryService from "../services/serviceCategoryService.js"
 
 class ServiceCategoryController {

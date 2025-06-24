@@ -1,4 +1,3 @@
-// backend/services/officeService.js
 import {Office} from "../models/init.js"
 
 class OfficeService {

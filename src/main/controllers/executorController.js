@@ -1,4 +1,3 @@
-// backend/controllers/executorController.js
 import ExecutorService from "../services/executorService.js"
 
 class ExecutorController {

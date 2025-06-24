@@ -1,4 +1,3 @@
-// backend/controllers/chatMessageController.js
 import ChatMessageService from "../services/chatMessageService.js"
 
 class ChatMessageController {

@@ -1,4 +1,3 @@
-// backend/routes/chatMessageRoutes.js
 import { Router } from "express"
 import ChatMessageController from "../controllers/chatMessageController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"

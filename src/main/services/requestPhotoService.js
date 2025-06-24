@@ -1,4 +1,3 @@
-// backend/services/requestPhotoService.js
 import {RequestPhoto} from "../models/init.js"
 
 class RequestPhotoService {

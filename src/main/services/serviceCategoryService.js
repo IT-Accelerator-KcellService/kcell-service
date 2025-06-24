@@ -1,4 +1,3 @@
-// backend/services/serviceCategoryService.js
 import {ServiceCategory} from "../models/init.js"
 
 class ServiceCategoryService {

@@ -1,4 +1,3 @@
-// backend/controllers/userController.js
 import UserService from "../services/userService.js"
 
 class UserController {

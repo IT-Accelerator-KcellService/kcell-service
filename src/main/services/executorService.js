@@ -1,4 +1,3 @@
-// backend/services/executorService.js
 import {Executor} from "../models/init.js"
 
 class ExecutorService {
