@@ -1,4 +1,5 @@
 import {Office} from "../models/init.js"
+import {NotFoundError} from "../errors/errors.js";
 
 class OfficeService {
   static async getAllOffices() {
@@ -6,7 +7,11 @@ class OfficeService {
   }
 
   static async getOfficeById(id) {
-    return await Office.findByPk(id)
+    const office = await Office.findByPk(id)
+    if (!office) {
+      throw new NotFoundError('No Office with id ' + id);
+    }
+    return office
   }
 
   static async createOffice(officeData) {
@@ -14,11 +19,19 @@ class OfficeService {
   }
 
   static async updateOffice(id, updateData) {
-    return await Office.update(id, updateData)
+    const updatedOffice = await Office.update(id, updateData)
+    if (!updatedOffice) {
+      throw new NotFoundError('No Office with id ' + id);
+    }
+    return await Office.findByPk(id)
   }
 
   static async deleteOffice(id) {
-    return await Office.destroy(id)
+    const deleted = await Office.destroy(id)
+    if (!deleted) {
+      throw new NotFoundError('No Office with id ' + id);
+    }
+    return deleted
   }
 }
 
