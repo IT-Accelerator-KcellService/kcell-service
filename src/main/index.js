@@ -12,9 +12,11 @@ import serviceCategoryRoutes from "./routes/serviceCategoryRoutes.js"
 import executorRoutes from "./routes/executorRoutes.js"
 import requestPhotoRoutes from "./routes/requestPhotoRoutes.js"
 import chatMessageRoutes from "./routes/chatMessageRoutes.js"
+import {initDb, sequelize} from "./config/database.js";
 
 dotenv.config() // Загружаем переменные окружения из .env
-
+await initDb();
+await sequelize.authenticate();
 const app = express()
 const PORT = process.env.PORT || 3001
 

@@ -1,24 +1,23 @@
-// backend/services/chatMessageService.js
-import ChatMessageModel from "../models/chatMessageModel.js"
+import {ChatMessage} from "../models/init.js"
 
 class ChatMessageService {
   static async getAllChatMessages() {
-    return await ChatMessageModel.getAll()
+    return await ChatMessage.findAll()
   }
   static async getChatMessageById(id) {
-    return await ChatMessageModel.getById(id)
+    return await ChatMessage.findByPk(id)
   }
   static async createChatMessage(messageData) {
-    return await ChatMessageModel.create(messageData)
+    return await ChatMessage.create(messageData)
   }
   static async updateChatMessage(id, updateData) {
-    return await ChatMessageModel.update(id, updateData)
+    return await ChatMessage.update(id, updateData)
   }
   static async deleteChatMessage(id) {
-    return await ChatMessageModel.delete(id)
+    return await ChatMessage.destroy(id)
   }
   static async getMessagesByRequestId(requestId) {
-    return await ChatMessageModel.getByRequestId(requestId)
+    return await ChatMessage.getByRequestId(requestId)
   }
 }
 

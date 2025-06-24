@@ -1,21 +1,21 @@
 // backend/services/executorService.js
-import ExecutorModel from "../models/executorModel.js"
+import {Executor} from "../models/init.js"
 
 class ExecutorService {
   static async getAllExecutors() {
-    return await ExecutorModel.getAll()
+    return await Executor.findAll()
   }
   static async getExecutorById(id) {
-    return await ExecutorModel.getById(id)
+    return await Executor.findByPk(id)
   }
   static async createExecutor(executorData) {
-    return await ExecutorModel.create(executorData)
+    return await Executor.create(executorData)
   }
   static async updateExecutor(id, updateData) {
-    return await ExecutorModel.update(id, updateData)
+    return await Executor.update(id, updateData)
   }
   static async deleteExecutor(id) {
-    return await ExecutorModel.delete(id)
+    return await Executor.destroy(id)
   }
 }
 

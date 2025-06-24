@@ -1,6 +1,7 @@
 {
   "name": "kcell-service-back",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "src/main/index.js",
   "scripts": {
@@ -9,10 +10,18 @@
   },
   "private": true,
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "node-pg-migrate": "^8.0.3",
+    "sequelize": "^6.37.7",
+    "pg": "^8.16.2",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }

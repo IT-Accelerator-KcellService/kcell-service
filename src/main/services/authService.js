@@ -1,43 +1,27 @@
-// backend/auth/authService.js
-import UserModel from "../models/userModel.js"
-import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
+import {generateToken, setTokenCookie} from "../utils/jwt/JwtService.js";
+import {comparePassword} from "../utils/bcrypt/BCryptService.js";
+import {User} from "../models/init.js";
 
 class AuthService {
-  static async register(email, password, full_name, position, office_id, role) {
-    const existingUser = await UserModel.getByEmail(email)
-    if (existingUser) {
-      throw new Error("User with this email already exists")
-    }
+  static async login(req, res) {
+    const {email, password}=req.body;
+    const user= await User.findOne({ where: { email } });
 
-    const newUser = await UserModel.create({ email, password, full_name, position, office_id, role })
-    // Не возвращаем хеш пароля
-    const { password_hash, ...userWithoutHash } = newUser
-    return userWithoutHash
-  }
-
-  static async login(email, password) {
-    const user = await UserModel.getByEmail(email)
     if (!user) {
-      throw new Error("Invalid credentials")
+      return res.status(401).json({success: false, details: [{message: "Invalid email or password"}]});
+    }
+    if (!await comparePassword(password, user.password_hash)) {
+      return res.status(401).json({success: false, details: [{message: "Invalid email or password"}]});
     }
 
-    const isMatch = await bcrypt.compare(password, user.password_hash)
-    if (!isMatch) {
-      throw new Error("Invalid credentials")
-    }
+    user.last_login = Date.now();
+    await user.save();
 
-    // Создаем JWT токен
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }, // Токен истекает через 1 час
-    )
+    const token = generateToken(user);
+    setTokenCookie(res, token);
 
-    // Не возвращаем хеш пароля
-    const { password_hash, ...userWithoutHash } = user
-    return { token, user: userWithoutHash }
+    return res.status(200).json({success: true});
   }
 }
+export default AuthService;
 
-export default AuthService
