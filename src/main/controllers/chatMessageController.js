@@ -1,71 +1,41 @@
+import {asyncHandler} from "../middleware/asyncHandler.js"
 import ChatMessageService from "../services/chatMessageService.js"
+import {validateId} from "../middleware/validate.js";
 
 class ChatMessageController {
-  static async getAllChatMessages(req, res) {
-    try {
-      const messages = await ChatMessageService.getAllChatMessages()
-      res.json(messages)
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static getAllChatMessages = asyncHandler(async (req, res) => {
+    const messages = await ChatMessageService.getAllChatMessages()
+    res.json(messages)
+  })
 
-  static async getChatMessageById(req, res) {
-    try {
-      const message = await ChatMessageService.getChatMessageById(Number.parseInt(req.params.id))
-      if (message) {
-        res.json(message)
-      } else {
-        res.status(404).json({ message: "Chat message not found" })
-      }
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static getChatMessageById = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id)
+    const message = await ChatMessageService.getChatMessageById(id)
+    res.json(message)
+  })
 
-  static async createChatMessage(req, res) {
-    try {
-      const newMessage = await ChatMessageService.createChatMessage(req.body)
-      res.status(201).json(newMessage)
-    } catch (error) {
-      res.status(400).json({ message: error.message })
-    }
-  }
+  static createChatMessage = asyncHandler(async (req, res) => {
+    const newMessage = await ChatMessageService.createChatMessage(req.body)
+    res.status(201).json(newMessage)
+  })
 
-  static async updateChatMessage(req, res) {
-    try {
-      const updatedMessage = await ChatMessageService.updateChatMessage(Number.parseInt(req.params.id), req.body)
-      if (updatedMessage) {
-        res.json(updatedMessage)
-      } else {
-        res.status(404).json({ message: "Chat message not found" })
-      }
-    } catch (error) {
-      res.status(400).json({ message: error.message })
-    }
-  }
+  static updateChatMessage = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id)
+    const updatedMessage = await ChatMessageService.updateChatMessage(id, req.body)
+    res.json(updatedMessage)
+  })
 
-  static async deleteChatMessage(req, res) {
-    try {
-      const deleted = await ChatMessageService.deleteChatMessage(Number.parseInt(req.params.id))
-      if (deleted) {
-        res.status(204).send()
-      } else {
-        res.status(404).json({ message: "Chat message not found" })
-      }
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static deleteChatMessage = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id)
+    await ChatMessageService.deleteChatMessage(id)
+    res.status(204).send()
+  })
 
-  static async getMessagesByRequestId(req, res) {
-    try {
-      const messages = await ChatMessageService.getMessagesByRequestId(Number.parseInt(req.params.requestId))
-      res.json(messages)
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static getMessagesByRequestId = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.requestId)
+    const messages = await ChatMessageService.getMessagesByRequestId(id)
+    res.json(messages)
+  })
 }
 
 export default ChatMessageController

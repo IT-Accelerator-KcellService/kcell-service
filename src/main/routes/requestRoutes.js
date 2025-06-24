@@ -4,7 +4,6 @@ import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.
 
 const router = Router()
 
-// Клиенты могут создавать и просматривать свои заявки
 router.post(
   "/",
   authenticateToken,

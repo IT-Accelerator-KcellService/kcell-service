@@ -11,6 +11,7 @@ import chatMessageRoutes from "./routes/chatMessageRoutes.js"
 import {initDb, sequelize} from "./config/database.js";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
+import {errorHandler} from "./middleware/errorHandler.js";
 
 dotenv.config();
 await initDb();
@@ -30,6 +31,8 @@ app.use("/api/service-categories", serviceCategoryRoutes)
 app.use("/api/executors", executorRoutes)
 app.use("/api/request-photos", requestPhotoRoutes)
 app.use("/api/chat-messages", chatMessageRoutes)
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Express server running on port ${PORT}`)
