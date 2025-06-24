@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS plans (
 
 CREATE TABLE IF NOT EXISTS requests (
     id SERIAL PRIMARY KEY,
-    request_id_display VARCHAR(20) UNIQUE NOT NULL,
     request_type VARCHAR(50) NOT NULL CHECK (request_type IN ('normal', 'urgent', 'planned')),
     title VARCHAR(255) NOT NULL,
     description TEXT,

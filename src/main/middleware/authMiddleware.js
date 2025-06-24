@@ -1,10 +1,11 @@
 import logger from '../utils/winston/logger.js';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret';
+
 const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
-
+   console.log(JWT_SECRET, token);
     if (!token) {
         logger.warn({
             message: 'Нет токена авторизации.',
