@@ -1,16 +1,19 @@
 import {generateToken, setTokenCookie} from "../utils/jwt/JwtService.js";
-import {comparePassword} from "../utils/bcrypt/BCryptService.js";
+import {comparePassword, getHashedPassword} from "../utils/bcrypt/BCryptService.js";
 import {User} from "../models/init.js";
 
 class AuthService {
   static async login(req, res) {
     const {email, password}=req.body;
-    const user= await User.findOne({ where: { email } });
+    const user = await User.findOne({
+      where: { email },
+      attributes: ['id', 'email', 'password', 'role', 'full_name']
+    });
 
     if (!user) {
       return res.status(401).json({success: false, details: [{message: "Invalid email or password"}]});
     }
-    if (!await comparePassword(password, user.password_hash)) {
+    if (!await comparePassword(password, user.password)) {
       return res.status(401).json({success: false, details: [{message: "Invalid email or password"}]});
     }
 
