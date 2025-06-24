@@ -14,14 +14,6 @@ export class UnauthorizedError extends Error {
     }
 }
 
-export class PaymentRequiredError extends Error {
-    constructor(message = "Payment Required") {
-        super(message);
-        this.name = "PaymentRequiredError";
-        this.status = 402;
-    }
-}
-
 export class ForbiddenError extends Error {
     constructor(message = "Forbidden") {
         super(message);

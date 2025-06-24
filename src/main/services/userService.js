@@ -1,4 +1,5 @@
 import {User} from "../models/init.js"
+import {NotFoundError} from "../errors/errors.js";
 
 class UserService {
   static async getAllUsers() {
@@ -6,7 +7,11 @@ class UserService {
   }
 
   static async getUserById(id) {
-    return await User.findByPk(id)
+    const user = await User.findByPk(id)
+    if (!user) {
+      throw new NotFoundError(`User not found`)
+    }
+    return user
   }
 
   static async createUser(userData) {
@@ -14,11 +19,19 @@ class UserService {
   }
 
   static async updateUser(id, updateData) {
-    return await User.update(id, updateData)
+    const updatedUser = await User.update(id, updateData)
+    if (!updatedUser) {
+      throw new NotFoundError(`User not found`)
+    }
+    return await User.findByPk(id)
   }
 
   static async deleteUser(id) {
-    return await User.destroy(id)
+    const deletedUser = await User.destroy(id)
+    if (!deletedUser) {
+      throw new NotFoundError(`User not found`)
+    }
+    return deletedUser
   }
 }
 
