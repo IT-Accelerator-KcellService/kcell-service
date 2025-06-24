@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import pg from 'pg';
-import { migrate } from 'node-pg-migrate';
+import * as migrate from 'node-pg-migrate';
 import { createSequelize } from './sequelize.js';
 import logger from "../utils/winston/logger.js";
 
@@ -26,7 +26,7 @@ export async function initDb() {
     try {
         logger.info('Migration is running...');
 
-        await migrate({
+        await migrate.runner({
             databaseUrl: {
                 host: process.env.DB_HOST,
                 port: process.env.DB_PORT,
