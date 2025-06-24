@@ -16,7 +16,7 @@ export const Request = sequelize.define('Request', {
     office_id: { type: DataTypes.INTEGER, references: { model: 'offices', key: 'id' } },
     plan_id: { type: DataTypes.INTEGER, references: { model: 'plans', key: 'id' } },
     location_detail: DataTypes.STRING(255),
-    date_submitted: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    date_submitted: { type: DataTypes.DATE },
     status: {
         type: DataTypes.STRING(50),
         allowNull: false,
