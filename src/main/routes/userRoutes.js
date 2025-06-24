@@ -16,7 +16,7 @@ router.get("/:id", authenticateToken, UserController.getUserById)
 router.post(
     "/",
     authenticateToken,
-    authorizeRoles("admin-worker", "manager"),
+    authorizeRoles("admin-worker", "manager", "department-head"),
     validateBody(UserDto),
     UserController.createUser
 )
