@@ -1,5 +1,6 @@
 import {User} from "../models/init.js"
-import {NotFoundError} from "../errors/errors.js";
+import {ForbiddenError, NotFoundError} from "../errors/errors.js";
+import {getHashedPassword} from "../utils/bcrypt/BCryptService.js";
 
 class UserService {
   static async getAllUsers() {
@@ -14,7 +15,13 @@ class UserService {
     return user
   }
 
-  static async createUser(userData) {
+  static async createUser(userData, user_role) {
+    if (['client', 'department-head'].includes(userData.role)) {
+      if (user_role !== 'admin-worker' || user_role !== 'manager') throw new ForbiddenError(`Forbidden`)
+    } else if (['executor'].includes(userData.role)){
+      if (user_role !== 'department-head') throw new ForbiddenError(`Forbidden`)
+    }
+    userData.password = await getHashedPassword(userData.password);
     return await User.create(userData)
   }
 

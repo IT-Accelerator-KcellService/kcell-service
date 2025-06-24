@@ -15,7 +15,7 @@ class UserController {
   });
 
   static createUser = asyncHandler(async (req, res) => {
-    const newUser = await UserService.createUser(req.body);
+    const newUser = await UserService.createUser(req.body, req.user.role);
     res.status(201).json(newUser);
   });
 

@@ -16,9 +16,10 @@ router.get("/:id", authenticateToken, UserController.getUserById)
 router.post(
     "/",
     authenticateToken,
-    authorizeRoles("admin-worker", "manager"),
+    authorizeRoles("admin-worker", "manager", "department-head"),
     validateBody(UserDto),
-    UserController.createUser)
+    UserController.createUser
+)
 router.put("/:id", authenticateToken, validateBody(UpdateUserDto), UserController.updateUser)
 router.delete("/:id", authenticateToken, authorizeRoles("admin-worker", "manager"), UserController.deleteUser)
 
