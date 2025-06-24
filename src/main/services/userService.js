@@ -1,5 +1,6 @@
 import {User} from "../models/init.js"
 import {NotFoundError} from "../errors/errors.js";
+import {getHashedPassword} from "../utils/bcrypt/BCryptService.js";
 
 class UserService {
   static async getAllUsers() {
@@ -15,6 +16,7 @@ class UserService {
   }
 
   static async createUser(userData) {
+    userData.password = await getHashedPassword(userData.password);
     return await User.create(userData)
   }
 
