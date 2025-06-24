@@ -1,0 +1,2 @@
+ALTER TABLE requests
+DROP COLUMN request_id_display

@@ -1,7 +1,5 @@
 import express from "express"
 import cors from "cors"
-import dotenv from "dotenv"
-
 import authRoutes from "./routes/authRoutes.js"
 import officeRoutes from "./routes/officeRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
@@ -11,12 +9,15 @@ import executorRoutes from "./routes/executorRoutes.js"
 import requestPhotoRoutes from "./routes/requestPhotoRoutes.js"
 import chatMessageRoutes from "./routes/chatMessageRoutes.js"
 import {initDb, sequelize} from "./config/database.js";
+import cookieParser from "cookie-parser";
+import dotenv from 'dotenv';
 
-dotenv.config()
+dotenv.config();
 await initDb();
 await sequelize.authenticate();
 const app = express()
 const PORT = process.env.PORT || 3001
+app.use(cookieParser());
 
 app.use(cors({ origin: "http://localhost:3000" }))
 app.use(express.json())
