@@ -1,31 +1,52 @@
-// backend/middleware/authMiddleware.js
-import jwt from "jsonwebtoken"
+import logger from '../utils/winston/logger.js';
+import jwt from 'jsonwebtoken';
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"]
-  const token = authHeader && authHeader.split(" ")[1] // Bearer TOKEN
+    const token = req.cookies.token;
 
-  if (token == null) {
-    return res.status(401).json({ message: "Authentication token required" })
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: "Invalid or expired token" })
+    if (!token) {
+        logger.warn({
+            message: 'Нет токена авторизации.',
+            endpoint: req.originalUrl,
+            userId: null,
+            requestId: null
+        });
+        return res.status(401).json({ message: 'Нет токена авторизации.' });
     }
-    req.user = user // Добавляем данные пользователя из токена в объект запроса
-    next()
-  })
-}
 
-// Middleware для проверки роли пользователя
-const authorizeRoles = (...roles) => {
-  return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Access denied: Insufficient permissions" })
-    }
-    next()
-  }
-}
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            logger.warn({
+                message: 'Неверный токен.',
+                endpoint: req.originalUrl,
+                userId: null,
+                requestId: null,
+                error: err.stack
+            });
+            return res.status(401).json({ message: 'Неверный токен.' });
+        }
+        req.user = user;
+        next();
+    });
+};
+const authorizeRoles = (...allowedRoles) => {
+    return (req, res, next) => {
+        const userRole = req.user?.role;
 
-export { authenticateToken, authorizeRoles }
+        if (!allowedRoles.includes(userRole)) {
+            logger.warn({
+                message: `Доступ запрещён для роли ${userRole}. Разрешены: ${allowedRoles.join(', ')}`,
+                endpoint: req.originalUrl,
+                userId: req.user?.id || null,
+                requestId: req.requestId || null
+            });
+            return res.status(403).json({ message: 'Доступ запрещён.' });
+        }
+
+        next();
+    };
+};
+
+
+
+export  { authenticateToken, authorizeRoles}

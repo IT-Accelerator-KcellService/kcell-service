@@ -1,25 +1,25 @@
 // backend/services/userService.js
-import UserModel from "../models/userModel.js"
+import {User} from "../models/init.js"
 
 class UserService {
   static async getAllUsers() {
-    return await UserModel.getAll()
+    return await User.findAll()
   }
 
   static async getUserById(id) {
-    return await UserModel.getById(id)
+    return await User.findByPk(id)
   }
 
   static async createUser(userData) {
-    return await UserModel.create(userData)
+    return await User.create(userData)
   }
 
   static async updateUser(id, updateData) {
-    return await UserModel.update(id, updateData)
+    return await User.update(id, updateData)
   }
 
   static async deleteUser(id) {
-    return await UserModel.delete(id)
+    return await User.destroy(id)
   }
 }
 

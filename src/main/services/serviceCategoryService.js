@@ -1,21 +1,21 @@
 // backend/services/serviceCategoryService.js
-import ServiceCategoryModel from "../models/serviceCategoryModel.js"
+import {ServiceCategory} from "../models/init.js"
 
 class ServiceCategoryService {
   static async getAllServiceCategories() {
-    return await ServiceCategoryModel.getAll()
+    return await ServiceCategory.findAll()
   }
   static async getServiceCategoryById(id) {
-    return await ServiceCategoryModel.getById(id)
+    return await ServiceCategory.findByPk(id)
   }
   static async createServiceCategory(categoryData) {
-    return await ServiceCategoryModel.create(categoryData)
+    return await ServiceCategory.create(categoryData)
   }
   static async updateServiceCategory(id, updateData) {
-    return await ServiceCategoryModel.update(id, updateData)
+    return await ServiceCategory.update(id, updateData)
   }
   static async deleteServiceCategory(id) {
-    return await ServiceCategoryModel.delete(id)
+    return await ServiceCategory.destroy(id)
   }
 }
 

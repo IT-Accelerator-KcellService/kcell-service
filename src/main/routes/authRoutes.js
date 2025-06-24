@@ -1,10 +1,10 @@
 // backend/routes/authRoutes.js
 import { Router } from "express"
-import AuthController from "../controllers/authController.js"
+import AuthService from "../services/authService.js";
 
 const router = Router()
 
-router.post("/register", AuthController.register)
-router.post("/login", AuthController.login)
+
+router.post("/login", AuthService.login)
 
 export default router

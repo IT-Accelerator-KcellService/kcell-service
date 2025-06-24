@@ -1,25 +1,25 @@
 // backend/services/officeService.js
-import OfficeModel from "../models/officeModel.js"
+import {Office} from "../models/init.js"
 
 class OfficeService {
   static async getAllOffices() {
-    return await OfficeModel.getAll()
+    return await Office.findAll()
   }
 
   static async getOfficeById(id) {
-    return await OfficeModel.getById(id)
+    return await Office.findByPk(id)
   }
 
   static async createOffice(officeData) {
-    return await OfficeModel.create(officeData)
+    return await Office.create(officeData)
   }
 
   static async updateOffice(id, updateData) {
-    return await OfficeModel.update(id, updateData)
+    return await Office.update(id, updateData)
   }
 
   static async deleteOffice(id) {
-    return await OfficeModel.delete(id)
+    return await Office.destroy(id)
   }
 }
 

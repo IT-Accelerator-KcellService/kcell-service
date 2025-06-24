@@ -1,25 +1,25 @@
 // backend/services/requestService.js
-import RequestModel from "../models/requestModel.js"
+import {Request} from "../models/init.js"
 
 class RequestService {
   static async getAllRequests() {
-    return await RequestModel.getAll()
+    return await Request.findAll()
   }
 
   static async getRequestById(id) {
-    return await RequestModel.getById(id)
+    return await Request.findByPk(id)
   }
 
   static async createRequest(requestData) {
-    return await RequestModel.create(requestData)
+    return await Request.create(requestData)
   }
 
   static async updateRequest(id, updateData) {
-    return await RequestModel.update(id, updateData)
+    return await Request.update(id, updateData)
   }
 
   static async deleteRequest(id) {
-    return await RequestModel.delete(id)
+    return await Request.destroy(id)
   }
 }
 
