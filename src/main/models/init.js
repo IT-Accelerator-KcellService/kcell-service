@@ -5,6 +5,8 @@ import { Request } from './Request.js';
 import { ServiceCategory } from './ServiceCategory.js';
 import { RequestPhoto } from './RequestPhoto.js';
 import { ChatMessage } from './ChatMessage.js';
+import {Plan} from "./Plan.js";
+import {RequestRating} from "./RequestRating.js";
 
 
 // Office ↔ Users
@@ -46,6 +48,13 @@ ChatMessage.belongsTo(Request, { foreignKey: 'request_id' });
 // User ↔ ChatMessage (sender)
 User.hasMany(ChatMessage, { foreignKey: 'sender_id' });
 ChatMessage.belongsTo(User, { foreignKey: 'sender_id' });
+
+Plan.belongsTo(User, { foreignKey: 'department_id' });
+Plan.belongsTo(Office, { foreignKey: 'office_id' });
+
+RequestRating.belongsTo(Request, { foreignKey: 'request_id', unique: true });
+RequestRating.belongsTo(User, { foreignKey: 'rated_by' });
+
 export {
     User,
     Request,
@@ -53,5 +62,7 @@ export {
     ChatMessage,
     Office,
     Executor,
-    RequestPhoto
+    RequestPhoto,
+    Plan,
+    RequestRating
 }

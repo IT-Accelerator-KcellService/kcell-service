@@ -1,6 +1,7 @@
 import logger from '../utils/winston/logger.js';
 import jwt from 'jsonwebtoken';
 
+const JWT_SECRET = process.env.JWT_SECRET;
 const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
 
@@ -13,9 +14,11 @@ const authenticateToken = (req, res, next) => {
         });
         return res.status(401).json({ message: 'Нет токена авторизации.' });
     }
+    console.log(token);
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
+            console.log('JWT error:', err.name, err.message); // <-- добавь это
             logger.warn({
                 message: 'Неверный токен.',
                 endpoint: req.originalUrl,

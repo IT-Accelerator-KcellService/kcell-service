@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS offices (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
-    city VARCHAR(255) UNIQUE NOT NULL,
+    city VARCHAR(255) NOT NULL,
     address VARCHAR(255) UNIQUE NOT NULL
 );
 
@@ -59,7 +59,6 @@ CREATE TABLE IF NOT EXISTS requests (
     sla VARCHAR(50),
     executor_id INT REFERENCES executors(id) ON DELETE SET NULL,
     admin_worker_id INT REFERENCES users(id) ON DELETE SET NULL,
-    planned_completion_date DATE,
     plan_id INT REFERENCES plans(id) ON DELETE SET NULL,
     actual_completion_date TIMESTAMP WITH TIME ZONE,
     rejection_reason TEXT,

@@ -11,7 +11,14 @@ export const RequestPhoto = sequelize.define('RequestPhoto', {
             key: 'id'
         }
     },
-    photo_url: { type: DataTypes.STRING(255), allowNull: false }
+    photo_url: { type: DataTypes.STRING(255), allowNull: false },
+    type: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+            isIn: [['before', 'after']]
+        }
+    }
 }, {
     tableName: 'request_photos',
     timestamps: false
