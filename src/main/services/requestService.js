@@ -1,6 +1,4 @@
-import {Request} from "../models/init.js"
 import UserService from "./userService.js";
-import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 
 class RequestService {

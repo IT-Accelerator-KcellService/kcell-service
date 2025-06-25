@@ -1,7 +1,11 @@
 import { RequestRating } from "../models/requestRating.js";
 
-export const createRating = async (ratingData) => {
-    return await RequestRating.create(ratingData);
+export const createRating = async (id,ratingData) => {
+    return await RequestRating.create({
+            rated_by: id,
+        ...ratingData
+    }
+    );
 };
 
 export const getAllRatings = async () => {

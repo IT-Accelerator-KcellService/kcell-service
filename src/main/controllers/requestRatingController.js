@@ -1,14 +1,15 @@
-import asyncHandler from "../middleware/asyncHandler.js";
 import * as ratingService from "../services/requestRatingService.js";
+import {asyncHandler} from "../middleware/asyncHandler.js";
 
 export const createRequestRating = asyncHandler(async (req, res) => {
-    const { rating } = req.body;
-
-    if (typeof rating !== "number" || rating < 0 || rating > 5) {
-        return res.status(400).json({ message: "Оценка должна быть от 0 до 5" });
+    const ratingData = req.body;
+    const rating=ratingData.rating
+    const id = req.user.id;
+    if (typeof rating !== "number" || rating < 1 || rating > 5) {
+        return res.status(400).json({ message: "Оценка должна быть от 1 до 5" });
     }
 
-    const newRating = await ratingService.createRating({ rating });
+    const newRating = await ratingService.createRating({id, ratingData });
     res.status(201).json(newRating);
 });
 

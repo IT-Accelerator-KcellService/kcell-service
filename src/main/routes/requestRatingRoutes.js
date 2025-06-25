@@ -9,7 +9,6 @@ import { authenticateToken } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-// Только аутентифицированные пользователи могут ставить оценки
 router.post("/", authenticateToken, createRequestRating);
 router.get("/", authenticateToken, getAllRequestRatings);
 router.get("/:id", authenticateToken, getRequestRatingById);

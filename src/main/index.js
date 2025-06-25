@@ -35,7 +35,8 @@ app.use("/api/service-categories", serviceCategoryRoutes)
 app.use("/api/executors", executorRoutes)
 app.use("/api/request-photos", requestPhotoRoutes)
 app.use("/api/chat-messages", chatMessageRoutes)
-app.use("/api/request-ratings", requestRatingRoutes);
+app.use("/api/ratings", requestRatingRoutes)
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
