@@ -3,7 +3,7 @@ import RequestPhotoController from "../controllers/requestPhotoController.js"
 import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"
 import multer from "multer";
 
-const upload = multer({ dest: "tmp/" })
+const upload = multer()
 const router = Router()
 
 router.get("/", authenticateToken, RequestPhotoController.getAllRequestPhotos)

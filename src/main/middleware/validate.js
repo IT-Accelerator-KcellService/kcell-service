@@ -1,6 +1,7 @@
 import { BadRequestError } from "../errors/errors.js";
+import logger from "../utils/winston/logger.js";
 
-export const validateId = (req, logger) => {
+export const validateId = (req) => {
     const id = Number(req.params.id);
     if (!Number.isFinite(id)) {
         logger.warn('Invalid ID received', {
