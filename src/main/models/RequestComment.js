@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database.js';
 
-export const ChatMessage = sequelize.define('ChatMessage', {
+export const RequestComment = sequelize.define('RequestComment', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     request_id: {
         type: DataTypes.INTEGER,
@@ -13,9 +13,9 @@ export const ChatMessage = sequelize.define('ChatMessage', {
         allowNull: false,
         references: { model: 'users', key: 'id' }
     },
-    message_text: { type: DataTypes.TEXT, allowNull: false },
+    comment: { type: DataTypes.TEXT, allowNull: false },
     timestamp: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
 }, {
-    tableName: 'chat_messages',
+    tableName: 'request_comments',
     timestamps: false
 });
