@@ -4,7 +4,7 @@ import { Executor } from './Executor.js';
 import { Request } from './Request.js';
 import { ServiceCategory } from './ServiceCategory.js';
 import { RequestPhoto } from './RequestPhoto.js';
-import { ChatMessage } from './ChatMessage.js';
+import { RequestComment } from './RequestComment.js';
 import {Plan} from "./Plan.js";
 import {RequestRating} from "./RequestRating.js";
 
@@ -41,13 +41,13 @@ Request.belongsTo(ServiceCategory, { foreignKey: 'category_id', as: 'category' }
 Request.hasMany(RequestPhoto, { foreignKey: 'request_id' , as: 'photos' });
 RequestPhoto.belongsTo(Request, { foreignKey: 'request_id', as: 'request' });
 
-// Request ↔ ChatMessage
-Request.hasMany(ChatMessage, { foreignKey: 'request_id' });
-ChatMessage.belongsTo(Request, { foreignKey: 'request_id' });
+// Request ↔ RequestComment
+Request.hasMany(RequestComment, { foreignKey: 'request_id', as: 'comments' });
+RequestComment.belongsTo(Request, { foreignKey: 'request_id', as: 'request' });
 
-// User ↔ ChatMessage (sender)
-User.hasMany(ChatMessage, { foreignKey: 'sender_id' });
-ChatMessage.belongsTo(User, { foreignKey: 'sender_id' });
+// User ↔ RequestComment (sender)
+User.hasMany(RequestComment, { foreignKey: 'sender_id', as: 'comments' });
+RequestComment.belongsTo(User, { foreignKey: 'sender_id', as: 'user' });
 
 Plan.belongsTo(User, { foreignKey: 'department_id' });
 Plan.belongsTo(Office, { foreignKey: 'office_id' });
@@ -59,7 +59,7 @@ export {
     User,
     Request,
     ServiceCategory,
-    ChatMessage,
+    RequestComment,
     Office,
     Executor,
     RequestPhoto,

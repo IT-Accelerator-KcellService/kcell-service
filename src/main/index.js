@@ -7,7 +7,7 @@ import requestRoutes from "./routes/requestRoutes.js"
 import serviceCategoryRoutes from "./routes/serviceCategoryRoutes.js"
 import executorRoutes from "./routes/executorRoutes.js"
 import requestPhotoRoutes from "./routes/requestPhotoRoutes.js"
-import chatMessageRoutes from "./routes/chatMessageRoutes.js"
+import chatMessageRoutes from "./routes/requestCommentRoutes.js"
 import {initDb, sequelize} from "./config/database.js";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
@@ -30,7 +30,7 @@ app.use("/api/requests", requestRoutes)
 app.use("/api/service-categories", serviceCategoryRoutes)
 app.use("/api/executors", executorRoutes)
 app.use("/api/request-photos", requestPhotoRoutes)
-app.use("/api/chat-messages", chatMessageRoutes)
+app.use("/api/comments", chatMessageRoutes)
 
 app.use(errorHandler);
 
