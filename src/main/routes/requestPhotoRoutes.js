@@ -23,7 +23,6 @@ router.put(
 router.delete(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager"),
   RequestPhotoController.deleteRequestPhoto,
 )
 router.get("/request/:requestId", authenticateToken, RequestPhotoController.getPhotosByRequestId)
