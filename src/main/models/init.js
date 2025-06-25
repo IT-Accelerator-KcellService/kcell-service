@@ -34,8 +34,8 @@ Office.hasMany(Request, { foreignKey: 'office_id' });
 Request.belongsTo(Office, { foreignKey: 'office_id' });
 
 // ServiceCategory ↔ Request
-ServiceCategory.hasMany(Request, { foreignKey: 'category_id' });
-Request.belongsTo(ServiceCategory, { foreignKey: 'category_id' });
+ServiceCategory.hasMany(Request, { foreignKey: 'category_id', as: 'requests' });
+Request.belongsTo(ServiceCategory, { foreignKey: 'category_id', as: 'category' });
 
 // Request ↔ RequestPhoto
 Request.hasMany(RequestPhoto, { foreignKey: 'request_id' , as: 'photos' });

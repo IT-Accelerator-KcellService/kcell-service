@@ -18,12 +18,17 @@ export const validateBody = (schema) => (req, res, next) => {
         req.body = schema.parse(req.body);
         next();
     } catch (error) {
+        logger.error(error);
+        const details = Array.isArray(error.errors)
+            ? error.errors.map((e) => ({
+                field: Array.isArray(e.path) ? e.path.join('.') : 'unknown',
+                message: e.message ?? 'Invalid input',
+              }))
+            : [{ field: 'unknown', message: 'Validation failed' }];
+
         return res.status(400).json({
             error: 'Validation error',
-            details: error.errors.map((e) => ({
-                field: e.path.join('.'),
-                message: e.message,
-            })),
+            details,
         });
     }
 };

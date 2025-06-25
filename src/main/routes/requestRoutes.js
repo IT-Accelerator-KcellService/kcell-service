@@ -1,6 +1,8 @@
-import { Router } from "express"
+import {Router} from "express"
 import RequestController from "../controllers/requestController.js"
-import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"
+import {authenticateToken, authorizeRoles} from "../middleware/authMiddleware.js"
+import {validateBody} from "../middleware/validate.js";
+import {AdminWorkerRequestStatus} from "../dto/Request.dto.js";
 
 const router = Router()
 
@@ -21,5 +23,14 @@ router.put(
   RequestController.updateRequest,
 )
 router.delete("/:id", authenticateToken, authorizeRoles("admin-worker", "manager"), RequestController.deleteRequest)
+
+router.get("/admin-worker/me", authenticateToken, authorizeRoles("admin-worker"), RequestController.getAdminWorkerRequests)
+router.patch(
+    "/status/:id",
+    authenticateToken,
+    authorizeRoles("admin-worker"),
+    validateBody(AdminWorkerRequestStatus),
+    RequestController.updateRequestStatus
+)
 
 export default router
