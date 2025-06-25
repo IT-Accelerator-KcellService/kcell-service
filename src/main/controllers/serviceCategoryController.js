@@ -1,6 +1,5 @@
 import ServiceCategoryService from "../services/serviceCategoryService.js"
 import {asyncHandler} from "../middleware/asyncHandler.js";
-import {validateId} from "../middleware/validate.js";
 
 class ServiceCategoryController {
   static getAllServiceCategories = asyncHandler(async (req, res) => {

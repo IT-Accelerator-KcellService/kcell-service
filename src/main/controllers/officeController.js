@@ -1,6 +1,5 @@
 import OfficeService from "../services/officeService.js"
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import {validateId} from "../middleware/validate.js";
+import {asyncHandler} from "../middleware/asyncHandler.js";
 
 class OfficeController {
   static getAllOffices = asyncHandler(async (req, res) => {

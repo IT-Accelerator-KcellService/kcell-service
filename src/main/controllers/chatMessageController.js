@@ -1,6 +1,5 @@
 import {asyncHandler} from "../middleware/asyncHandler.js"
-import ChatMessageService from "../services/chatMessageService.js"
-import {validateId} from "../middleware/validate.js";
+import ChatMessageService from "../services/requestCommentService.js"
 
 class ChatMessageController {
   static getAllChatMessages = asyncHandler(async (req, res) => {
