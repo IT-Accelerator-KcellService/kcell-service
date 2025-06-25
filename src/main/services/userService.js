@@ -35,7 +35,7 @@ class UserService {
       } catch (err) {
         await tx.rollback();
         logger.error(`Error creating user: ${userData}`)
-        throw new Error(`Internal Server Error`)
+        throw err
       }
     }
     userData.password = await getHashedPassword(userData.password);
