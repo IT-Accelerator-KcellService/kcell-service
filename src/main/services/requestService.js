@@ -35,7 +35,7 @@ class RequestService {
   }
 
   static async deleteRequest(id) {
-    return await Request.destroy(id)
+    return await Request.destroy({ where: { id } });
   }
 
   static async getAdminWorkerRequests(id) {
