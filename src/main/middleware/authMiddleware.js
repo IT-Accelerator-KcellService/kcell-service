@@ -19,7 +19,7 @@ const authenticateToken = (req, res, next) => {
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
-            console.log('JWT error:', err.name, err.message); // <-- добавь это
+            console.log('JWT error:', err.name, err.message);
             logger.warn({
                 message: 'Неверный токен.',
                 endpoint: req.originalUrl,

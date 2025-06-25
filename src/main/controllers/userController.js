@@ -1,62 +1,35 @@
+import {asyncHandler} from "../middleware/asyncHandler.js";
 import UserService from "../services/userService.js"
+import {validateId} from "../middleware/validate.js";
 
 class UserController {
-  static async getAllUsers(req, res) {
-    try {
-      const users = await UserService.getAllUsers()
-      res.json(users)
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static getAllUsers = asyncHandler(async (req, res) => {
+    const users = await UserService.getAllUsers();
+    res.json(users);
+  });
 
-  static async getUserById(req, res) {
-    try {
-      const user = await UserService.getUserById(Number.parseInt(req.params.id))
-      if (user) {
-        res.json(user)
-      } else {
-        res.status(404).json({ message: "User not found" })
-      }
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static getUserById = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id);
+    const user = await UserService.getUserById(id);
+    res.json(user);
+  });
 
-  static async createUser(req, res) {
-    try {
-      const newUser = await UserService.createUser(req.body)
-      res.status(201).json(newUser)
-    } catch (error) {
-      res.status(400).json({ message: error.message })
-    }
-  }
+  static createUser = asyncHandler(async (req, res) => {
+    const newUser = await UserService.createUser(req.body, req.user.role);
+    res.status(201).json(newUser);
+  });
 
-  static async updateUser(req, res) {
-    try {
-      const updatedUser = await UserService.updateUser(Number.parseInt(req.params.id), req.body)
-      if (updatedUser) {
-        res.json(updatedUser)
-      } else {
-        res.status(404).json({ message: "User not found" })
-      }
-    } catch (error) {
-      res.status(400).json({ message: error.message })
-    }
-  }
+  static updateUser = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id);
+    const updatedUser = await UserService.updateUser(id, req.body);
+    res.json(updatedUser);
+  });
 
-  static async deleteUser(req, res) {
-    try {
-      const deleted = await UserService.deleteUser(Number.parseInt(req.params.id))
-      if (deleted) {
-        res.status(204).send() // No Content
-      } else {
-        res.status(404).json({ message: "User not found" })
-      }
-    } catch (error) {
-      res.status(500).json({ message: error.message })
-    }
-  }
+  static deleteUser = asyncHandler(async (req, res) => {
+    const id = validateId(req.params.id);
+    await UserService.deleteUser(id);
+    res.status(204).send();
+  });
 }
 
 export default UserController

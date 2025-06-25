@@ -11,6 +11,16 @@ export const Office = sequelize.define('Office', {
         type: DataTypes.STRING(255),
         allowNull: false,
         unique: true
+    },
+    address: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true
+    },
+    city: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true
     }
 }, {
     tableName: 'offices',
