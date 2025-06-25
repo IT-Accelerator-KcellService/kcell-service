@@ -1,4 +1,13 @@
-import {RequestPhoto} from "../models/init.js"
+import fs from "fs/promises";
+import {v2 as cloudinary} from "cloudinary"
+import {RequestPhoto} from "../models/RequestPhoto.js"
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
 
 class RequestPhotoService {
   static async getAllRequestPhotos() {
@@ -18,6 +27,22 @@ class RequestPhotoService {
   }
   static async getPhotosByRequestId(requestId) {
     return await RequestPhoto.getByRequestId(requestId)
+  }
+
+  static async uploadRequestPhoto(file, requestId, type) {
+    const result = await cloudinary.uploader.upload(file.path, {
+      folder: "request_photos",
+    })
+
+    await fs.unlink(file.path)
+
+    const photo = await RequestPhoto.create({
+      request_id: requestId,
+      photo_url: result.secure_url,
+      type,
+    })
+
+    return photo
   }
 }
 

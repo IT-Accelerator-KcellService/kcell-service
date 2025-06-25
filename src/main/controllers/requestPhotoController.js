@@ -1,4 +1,6 @@
 import RequestPhotoService from "../services/requestPhotoService.js"
+import {asyncHandler} from "../middleware/asyncHandler.js";
+import RequestService from "../services/requestService.js";
 
 class RequestPhotoController {
   static async getAllRequestPhotos(req, res) {
@@ -66,6 +68,34 @@ class RequestPhotoController {
       res.status(500).json({ message: error.message })
     }
   }
+
+  static uploadPhotos = asyncHandler(async (req, res) => {
+    const requestId = req.params.id
+    const files = req.files
+    const { type } = req.body
+
+    const request = await RequestService.getRequestById(requestId)
+    if (!request) {
+      res.status(404).json({ message: "Request not found" })
+    }
+    if (!files || files.length === 0) {
+      return res.status(400).json({ message: "Нет файлов для загрузки" })
+    }
+
+    if (!type || !["before", "after"].includes(type)) {
+      return res.status(400).json({ message: "Неверный тип фотографии (before/after)" })
+    }
+
+    const savedPhotos = []
+
+    for (const file of files) {
+      const photo = await RequestPhotoService.uploadRequestPhoto(file, requestId, type)
+      savedPhotos.push(photo)
+    }
+
+    res.status(201).json({ message: "Фотографии загружены", photos: savedPhotos })
+  })
+
 }
 
 export default RequestPhotoController
