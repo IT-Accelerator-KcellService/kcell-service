@@ -1,6 +1,7 @@
 import RequestService from "../services/requestService.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import {NotFoundError} from "../errors/errors.js";
+import {validateId} from "../middleware/validate.js";
 
 class RequestController {
   static getAllRequests = asyncHandler(async (req, res) => {
@@ -48,6 +49,17 @@ class RequestController {
     } else {
       res.status(404).json({ message: "Request not found" });
     }
+  });
+
+  static getAdminWorkerRequests = asyncHandler(async (req, res) => {
+    const data = await RequestService.getAdminWorkerRequests(req.user.id);
+    res.status(200).json(data);
+  })
+
+  static updateRequestStatus = asyncHandler(async (req, res) => {
+    const id = validateId(req);
+    const data = await RequestService.updateRequestStatus(id, req.body);
+    res.status(200).json(data);
   });
 }
 
