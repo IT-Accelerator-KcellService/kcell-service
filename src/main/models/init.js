@@ -34,12 +34,12 @@ Office.hasMany(Request, { foreignKey: 'office_id' });
 Request.belongsTo(Office, { foreignKey: 'office_id' });
 
 // ServiceCategory ↔ Request
-ServiceCategory.hasMany(Request, { foreignKey: 'category_id' });
-Request.belongsTo(ServiceCategory, { foreignKey: 'category_id' });
+ServiceCategory.hasMany(Request, { foreignKey: 'category_id', as: 'requests' });
+Request.belongsTo(ServiceCategory, { foreignKey: 'category_id', as: 'category' });
 
 // Request ↔ RequestPhoto
-Request.hasMany(RequestPhoto, { foreignKey: 'request_id' });
-RequestPhoto.belongsTo(Request, { foreignKey: 'request_id' });
+Request.hasMany(RequestPhoto, { foreignKey: 'request_id' , as: 'photos' });
+RequestPhoto.belongsTo(Request, { foreignKey: 'request_id' , as: 'request' });
 
 // Request ↔ ChatMessage
 Request.hasMany(ChatMessage, { foreignKey: 'request_id' });
