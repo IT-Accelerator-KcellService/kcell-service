@@ -14,7 +14,7 @@ export const setTokenCookie=(res, token) =>{
     res.cookie('token', token, {
         httpOnly: false,
         secure: false,
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
 }

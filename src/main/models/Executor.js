@@ -12,6 +12,15 @@ export const Executor = sequelize.define('Executor', {
             key: 'id'
         }
     },
+    department_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id'
+        },
+        onDelete: 'CASCADE'
+    },
     specialty: { type: DataTypes.STRING(100), allowNull: false }
 }, {
     tableName: 'executors',
