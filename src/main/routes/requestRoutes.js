@@ -10,7 +10,9 @@ router.post(
   authorizeRoles("client", "admin-worker", "manager"),
   RequestController.createRequest,
 )
-router.get("/", authenticateToken, RequestController.getAllRequests) // Доступно всем аутентифицированным
+router.get("/", authenticateToken, RequestController.getAllRequests)
+router.get("/user", authenticateToken, RequestController.getRequestsByUser)
+
 router.get("/:id", authenticateToken, RequestController.getRequestById)
 router.put(
   "/:id",

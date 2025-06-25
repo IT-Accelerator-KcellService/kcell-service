@@ -1,2 +1,5 @@
 ALTER TABLE requests
-DROP COLUMN request_id_display
+DROP COLUMN date_submitted;
+
+ALTER TABLE requests
+ADD COLUMN date_submitted TIMESTAMP WITH TIME ZONE;
