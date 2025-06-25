@@ -9,7 +9,7 @@ class ChatMessageController {
   })
 
   static getChatMessageById = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    const id = req.params.id
     const message = await ChatMessageService.getChatMessageById(id)
     res.json(message)
   })
@@ -20,19 +20,19 @@ class ChatMessageController {
   })
 
   static updateChatMessage = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    const id = req.params.id
     const updatedMessage = await ChatMessageService.updateChatMessage(id, req.body)
     res.json(updatedMessage)
   })
 
   static deleteChatMessage = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    const id = req.params.id
     await ChatMessageService.deleteChatMessage(id)
     res.status(204).send()
   })
 
   static getMessagesByRequestId = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.requestId)
+    const id = req.params.requestId
     const messages = await ChatMessageService.getMessagesByRequestId(id)
     res.json(messages)
   })

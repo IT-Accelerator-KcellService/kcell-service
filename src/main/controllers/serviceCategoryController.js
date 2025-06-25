@@ -9,7 +9,8 @@ class ServiceCategoryController {
   })
 
   static getServiceCategoryById = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    console.log(req.params.id);
+    const id = req.params.id
     const category = await ServiceCategoryService.getServiceCategoryById(id);
     res.json(category);
   });
@@ -20,13 +21,14 @@ class ServiceCategoryController {
   });
 
   static updateServiceCategory = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+
+    const id = req.params.id
     const updatedCategory = await ServiceCategoryService.updateServiceCategory(id, req.body);
     res.json(updatedCategory);
   });
 
   static deleteServiceCategory = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    const id = req.params.id
     await ServiceCategoryService.deleteServiceCategory(id);
     res.status(204).send();
   });

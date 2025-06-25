@@ -12,6 +12,7 @@ import {initDb, sequelize} from "./config/database.js";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 import {errorHandler} from "./middleware/errorHandler.js";
+import requestRatingRoutes from "./routes/requestRatingRoutes.js";
 
 dotenv.config();
 await initDb();
@@ -20,7 +21,10 @@ const app = express()
 const PORT = process.env.PORT || 3001
 app.use(cookieParser());
 
-app.use(cors({ origin: "http://localhost:3000" }))
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 app.use(express.json())
 
 app.use("/api/auth", authRoutes)
@@ -31,7 +35,7 @@ app.use("/api/service-categories", serviceCategoryRoutes)
 app.use("/api/executors", executorRoutes)
 app.use("/api/request-photos", requestPhotoRoutes)
 app.use("/api/chat-messages", chatMessageRoutes)
-
+app.use("/api/request-ratings", requestRatingRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
