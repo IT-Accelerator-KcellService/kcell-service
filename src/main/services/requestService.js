@@ -9,8 +9,18 @@ class RequestService {
     return await Request.findByPk(id)
   }
 
-  static async createRequest(requestData) {
-    return await Request.create(requestData)
+  static async createRequest(id, requestData) {
+    return await Request.create({
+      client_id: id,
+      ...requestData
+    });
+  }
+  static async getRequestsByUser(userId) {
+    return await Request.findAll({
+      where: {
+        client_id: userId
+      }
+    });
   }
 
   static async updateRequest(id, updateData) {
