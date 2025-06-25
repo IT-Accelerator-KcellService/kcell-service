@@ -2,11 +2,15 @@ import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 
 class RequestService {
   static async getAllRequests() {
-    return await Request.findAll()
+    return await Request.findAll({
+      include: [{ model: RequestPhoto, as: 'photos' }],
+    })
   }
 
   static async getRequestById(id) {
-    return await Request.findByPk(id)
+    return await Request.findByPk(id, {
+      include: [{ model: RequestPhoto, as: "photos" }]
+    })
   }
 
   static async createRequest(id, requestData) {

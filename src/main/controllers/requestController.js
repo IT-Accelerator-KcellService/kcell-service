@@ -10,7 +10,8 @@ class RequestController {
   });
 
   static getRequestById = asyncHandler(async (req, res) => {
-    const request = await RequestService.getRequestById(Number.parseInt(req.params.id));
+    const id = validateId(req)
+    const request = await RequestService.getRequestById(id);
     if (request) {
       res.json(request);
     } else {

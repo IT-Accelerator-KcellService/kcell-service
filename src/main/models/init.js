@@ -39,7 +39,7 @@ Request.belongsTo(ServiceCategory, { foreignKey: 'category_id', as: 'category' }
 
 // Request ↔ RequestPhoto
 Request.hasMany(RequestPhoto, { foreignKey: 'request_id' , as: 'photos' });
-RequestPhoto.belongsTo(Request, { foreignKey: 'request_id' , as: 'request' });
+RequestPhoto.belongsTo(Request, { foreignKey: 'request_id', as: 'request' });
 
 // Request ↔ ChatMessage
 Request.hasMany(ChatMessage, { foreignKey: 'request_id' });
