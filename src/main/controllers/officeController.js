@@ -1,6 +1,5 @@
 import OfficeService from "../services/officeService.js"
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import {validateId} from "../middleware/validate.js";
+import {asyncHandler} from "../middleware/asyncHandler.js";
 
 class OfficeController {
   static getAllOffices = asyncHandler(async (req, res) => {
@@ -9,7 +8,7 @@ class OfficeController {
   });
 
   static getOfficeById = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    const id = req.params.id
     const office = await OfficeService.getOfficeById(id)
     res.json(office)
   });
@@ -20,13 +19,13 @@ class OfficeController {
   });
 
   static updateOffice = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    const id = req.params.id
     const updatedOffice = await OfficeService.updateOffice(id, req.body)
     res.json(updatedOffice)
   });
 
   static deleteOffice = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id)
+    const id = req.params.id
     await OfficeService.deleteOffice(id)
     res.status(204).send()
   });

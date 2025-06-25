@@ -24,14 +24,21 @@ export const Request = sequelize.define('Request', {
         validate: {
             isIn: [['in_progress', 'execution', 'completed', 'rejected',
                 'awaiting_assignment', 'awaiting_sla', 'assigned']]
-        }
+        },
+        defaultValue: 'in_progress'
     },
     category_id: { type: DataTypes.INTEGER, references: { model: 'service_categories', key: 'id' } },
     complexity: { type: DataTypes.STRING(50) },
     sla: DataTypes.STRING(50),
     executor_id: { type: DataTypes.INTEGER, references: { model: 'executors', key: 'id' } },
     actual_completion_date: DataTypes.DATE,
-    rejection_reason: DataTypes.TEXT
+    rejection_reason: DataTypes.TEXT,
+    created_date: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false
+    }
+
 }, {
     tableName: 'requests',
     timestamps: false

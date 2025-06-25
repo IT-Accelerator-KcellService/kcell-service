@@ -19,7 +19,6 @@ class RequestController {
     }
   });
   static getRequestsByUser = asyncHandler(async (req, res) => {
-    console.log(req.user);
     const userId = req.user.id;
     const request = await RequestService.getRequestsByUser(userId);
     if (request) {

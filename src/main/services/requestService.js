@@ -1,3 +1,4 @@
+import UserService from "./userService.js";
 import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 
 class RequestService {
@@ -14,8 +15,10 @@ class RequestService {
   }
 
   static async createRequest(id, requestData) {
+    const office_id= await UserService.getUserById(id)
     return await Request.create({
       client_id: id,
+      office_id: office_id,
       ...requestData
     });
   }

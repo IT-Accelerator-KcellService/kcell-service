@@ -7,5 +7,24 @@ export const RequestRating = sequelize.define('RequestRating', {
         allowNull: false,
         validate: { min: 0, max: 5 }
     },
+    request_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        references: {
+            model: 'requests',
+            key: 'id'
+        },
+        onDelete: 'CASCADE'
+    },
+    rated_by: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id'
+        },
+        onDelete: 'SET NULL'
+    },
     rated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
 }, { tableName: 'request_ratings', timestamps: false });
