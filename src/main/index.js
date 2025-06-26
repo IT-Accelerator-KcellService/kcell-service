@@ -13,6 +13,10 @@ import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 import {errorHandler} from "./middleware/errorHandler.js";
 import requestRatingRoutes from "./routes/requestRatingRoutes.js";
+import fs from "node:fs";
+import yaml from "yaml";
+import swaggerUi from "swagger-ui-express";
+
 
 dotenv.config();
 await initDb();
@@ -27,6 +31,9 @@ app.use(cors({
 }));
 app.use(express.json())
 
+const swaggerFile = fs.readFileSync('./swagger.yaml', 'utf8');
+const swaggerDocument = yaml.parse(swaggerFile);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/auth", authRoutes)
 app.use("/api/offices", officeRoutes)
 app.use("/api/users", userRoutes)

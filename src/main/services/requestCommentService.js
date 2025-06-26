@@ -1,4 +1,4 @@
-import {RequestComment} from "../models/init.js"
+import {RequestComment, User} from "../models/init.js"
 import {NotFoundError} from "../errors/errors.js";
 
 class RequestCommentService {
@@ -36,7 +36,17 @@ class RequestCommentService {
   }
 
   static async getMessagesByRequestId(requestId) {
-    return await RequestComment.findAll({where: {request_id: requestId}})
+    return await RequestComment.findAll({
+      where: { request_id: requestId },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'full_name']
+        }
+      ],
+      order: [['timestamp', 'ASC']]
+    });
   }
 }
 

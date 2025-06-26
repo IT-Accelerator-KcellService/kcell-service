@@ -1,4 +1,4 @@
-import { RequestRating} from "../models/init.js";
+import {RequestRating} from "../models/init.js";
 
 export const createRating = async (rated_by,request_id,rating) => {
     const existing = await RequestRating.findOne({
