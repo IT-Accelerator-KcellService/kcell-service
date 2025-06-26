@@ -12,7 +12,8 @@ router.get(
   authorizeRoles("admin-worker", "department-head", "manager"),
   UserController.getAllUsers,
 )
-router.get("/me", authenticateToken, UserController.getUserById)
+router.get("/me", authenticateToken, UserController.getUserMe)
+router.get("/:id", authenticateToken, UserController.getUserById)
 router.post(
     "/",
     authenticateToken,
