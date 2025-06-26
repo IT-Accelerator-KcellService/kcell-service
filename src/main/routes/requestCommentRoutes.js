@@ -17,13 +17,12 @@ router.post(
 router.put(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager"),
+  validateBody(CommentDto),
   RequestCommentController.updateRequestComment,
 )
 router.delete(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager"),
   RequestCommentController.deleteRequestComment,
 )
 router.get("/request/:requestId", authenticateToken, RequestCommentController.getRequestCommentsByRequestId)

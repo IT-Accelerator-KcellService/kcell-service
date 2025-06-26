@@ -20,7 +20,7 @@ class RequestCommentService {
   }
 
   static async updateChatMessage(id, updateData) {
-    const updated = await RequestComment.update(id, updateData)
+    const [updated] = await RequestComment.update(updateData, { where: { id } });
     if (!updated) {
       throw new NotFoundError("Chat not found")
     }
@@ -28,7 +28,7 @@ class RequestCommentService {
   }
 
   static async deleteChatMessage(id) {
-    const deleted = await RequestComment.destroy(id)
+    const deleted = await RequestComment.destroy({where: {id}})
     if (!deleted) {
       throw new NotFoundError("chat not found")
     }
