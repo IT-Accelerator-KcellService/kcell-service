@@ -9,7 +9,7 @@ class UserController {
   });
 
   static getUserById = asyncHandler(async (req, res) => {
-    const id = req.params.id;
+    const id = req.user.id;
     const user = await UserService.getUserById(id);
     res.json(user);
   });
