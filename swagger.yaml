@@ -6,6 +6,105 @@ info:
 servers:
   - url: https://api.kcell-service.kz
 paths:
+  /api/requests:
+    post:
+      summary: Create a new request
+      tags: [Request]
+      responses:
+        '201':
+          description: Created
+    get:
+      summary: Get all requests
+      tags: [Request]
+      responses:
+        '200':
+          description: A list of all requests
+
+  /api/requests/user:
+    get:
+      summary: Get requests by the current user
+      tags: [Request]
+      responses:
+        '200':
+          description: A list of requests by the current user
+        '404':
+          description: Not found
+
+  /api/requests/{id}:
+    get:
+      summary: Get a request by ID
+      tags: [Request]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found
+        '404':
+          description: Not found
+    put:
+      summary: Update a request
+      tags: [Request]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Updated
+        '404':
+          description: Not found
+    delete:
+      summary: Delete a request
+      tags: [Request]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /api/requests/admin-worker/me:
+    get:
+      summary: Get requests for the current admin worker
+      tags: [Request]
+      responses:
+        '200':
+          description: My and other requests for the admin worker
+
+  /api/requests/status/{id}:
+    patch:
+      summary: Update request status by ID
+      tags: [Request]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminWorkerRequestStatus'
+      responses:
+        '200':
+          description: Status updated
+        '400':
+          description: Invalid status or missing required fields
+        '404':
+          description: Request not found
   /api/auth/login:
     post:
       summary: Login user
@@ -242,6 +341,148 @@ paths:
         '404':
           description: Request not found
 
+  /api/comments:
+    get:
+      summary: Get all request comments
+      tags: [Comment]
+      responses:
+        '200':
+          description: A list of all request comments
+    post:
+      summary: Create a new request comment
+      tags: [Comment]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        '201':
+          description: Created
+
+  /api/comments/{id}:
+    get:
+      summary: Get a request comment by ID
+      tags: [Comment]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found
+        '404':
+          description: Not found
+    put:
+      summary: Update a request comment
+      tags: [Comment]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete a request comment
+      tags: [Comment]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+
+  /api/comments/request/{requestId}:
+    get:
+      summary: Get comments by request ID
+      tags: [Comment]
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of comments related to a request
+        '404':
+          description: Request not found
+
+  /api/notifications/me:
+    get:
+      summary: Get notifications for the current user
+      tags: [Notification]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of user notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+
+  /api/notifications/{id}/read:
+    patch:
+      summary: Mark a notification as read
+      tags: [Notification]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '403':
+          description: Forbidden
+        '404':
+          description: Notification not found
+
+  /api/notifications/{id}:
+    delete:
+      summary: Delete a notification
+      tags: [Notification]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+        '403':
+          description: Forbidden
+        '404':
+          description: Notification not found
+
 components:
   schemas:
     ServiceCategory:
@@ -282,3 +523,62 @@ components:
         - password
         - full_name
         - office_id
+    Comment:
+      type: object
+      properties:
+        request_id:
+          type: integer
+        comment:
+          type: string
+      required:
+        - request_id
+        - comment
+
+    AdminWorkerRequestStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [rejected, awaiting_assignment]
+        complexity:
+          type: string
+          enum: [simple, medium, complex]
+        sla:
+          type: string
+        category_id:
+          type: integer
+        rejection_reason:
+          type: string
+      required:
+        - status
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        request_id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - user_id
+        - request_id
+        - title
+        - content
+        - is_read
+        - created_at
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
