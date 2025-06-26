@@ -1,8 +1,7 @@
 import sgMail from '@sendgrid/mail';
 import {Notification, User} from "../models//init.js"
 import {ForbiddenError, NotFoundError} from "../errors/errors.js";
-import req from "express/lib/request.js";
-import {user} from "pg/lib/defaults.js";
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class NotificationService {
@@ -37,11 +36,13 @@ class NotificationService {
         return await Notification.destroy({where: {id}})
     }
 
-    static async sendNotification({ userId, requestId = null, type, content = null }) {
+    static async sendNotification({ userId, requestId, type, content = null }) {
         if (!userId || !type) {
             throw new Error("Missing required fields: userId or type");
         }
         const sender = await User.findByPk(userId);
+        let notifTitle;
+        let notifContent;
         switch (type) {
             case 'new_request':
                 if (!sender || !sender.office_id) {
@@ -54,11 +55,9 @@ class NotificationService {
                         office_id: sender.office_id
                     }
                 });
-
+                notifTitle = "Новая заявка";
+                notifContent = `Пользователь из вашего офиса создал новую заявку(${requestId}).`;
                 for (const admin of admins) {
-                    const notifTitle = "Новая заявка";
-                    const notifContent = `Пользователь из вашего офиса создал новую заявку(${requestId}).`;
-
                     Notification.create({
                         user_id: admin.id,
                         request_id: requestId,
@@ -77,7 +76,7 @@ class NotificationService {
 
                 break;
             case 'reject_request':
-                const notifTitle = "Заявка откланен";
+                notifTitle = "Заявка откланен";
 
                 await Notification.create({
                     user_id: userId,
@@ -95,7 +94,44 @@ class NotificationService {
                 });
                 break;
             case 'awaiting_assignment':
+                const department_heads = await User.findAll({
+                    where: {
+                        role: 'department-head'
+                    }
+                });
+                notifTitle = "Админ принял заявку";
+                notifContent = `Админ принял заявку(${requestId}).`;
+                for (const depHead of department_heads) {
+                    Notification.create({
+                        user_id: depHead.id,
+                        request_id: requestId,
+                        title: notifTitle,
+                        content: notifContent,
+                        is_read: false
+                    });
 
+                    sgMail.send({
+                        to: depHead.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: notifContent
+                    });
+                }
+
+                Notification.create({
+                    user_id: sender.id,
+                    request_id: requestId,
+                    title: notifTitle,
+                    content: notifContent,
+                    is_read: false
+                });
+
+                sgMail.send({
+                    to: sender.email,
+                    from: process.env.SENDGRID_EMAIL_FROM,
+                    subject: notifTitle,
+                    text: notifContent
+                });
                 break;
             default:
                 throw new Error(`Unknown notification type: ${type}`);
