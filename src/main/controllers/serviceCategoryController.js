@@ -8,7 +8,6 @@ class ServiceCategoryController {
   })
 
   static getServiceCategoryById = asyncHandler(async (req, res) => {
-    console.log(req.params.id);
     const id = req.params.id
     const category = await ServiceCategoryService.getServiceCategoryById(id);
     res.json(category);
