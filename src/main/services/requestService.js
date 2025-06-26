@@ -1,4 +1,3 @@
-import { transporter } from "../config/mailer.js";
 import UserService from "./userService.js";
 import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 
@@ -16,10 +15,10 @@ class RequestService {
   }
 
   static async createRequest(id, requestData) {
-    const office_id= await UserService.getUserById(id)
+    const user= await UserService.getUserById(id)
     return await Request.create({
       client_id: id,
-      office_id: office_id,
+      office_id: user.office_id,
       ...requestData
     });
   }
@@ -64,27 +63,13 @@ class RequestService {
       if (!data.rejection_reason || data.rejection_reason.trim() === '') {
         throw new Error('Rejection reason is required when status is rejected');
       }
-      const destroyResult = await Request.destroy({ where: { id } });
-      const rejectedUser = await User.findByPk(id);
-      await transporter.sendMail({
-        from: process.env.GMAIL_USER,
-        to: rejectedUser.email,
-        subject: 'Request Rejected',
-        text: `Your request has been rejected. Reason: ${data.rejection_reason}`
-      });
-      return destroyResult;
+      return await Request.destroy({where: {id}});
     } else if (data.status === 'awaiting_assignment') {
+      console.log(data);
       const { status, complexity, sla, category_id } = data;
       if (!complexity && !sla && !category_id) {
         throw new Error('complexity, sla, description is required when status is awaiting_assignment');
       }
-      const updatedUser = await User.findByPk(id);
-      await transporter.sendMail({
-        from: process.env.GMAIL_USER,
-        to: updatedUser.email,
-        subject: 'Request Awaiting Assignment',
-        text: 'Your request status has been updated to awaiting assignment.'
-      });
       return await Request.update(
         {
           status,
