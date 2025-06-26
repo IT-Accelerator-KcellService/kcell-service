@@ -17,12 +17,13 @@ class RequestService {
   }
 
   static async createRequest(id, requestData) {
-    const office_id= await UserService.getUserById(id)
-    const request = await Request.create({
+    const user= await UserService.getUserById(id)
+    return await Request.create({
       client_id: id,
-      office_id: office_id,
+      office_id: user.office_id,
       ...requestData
     });
+
     NotificationService.sendNotification({
       userId: id,
       requestId: request.id,
