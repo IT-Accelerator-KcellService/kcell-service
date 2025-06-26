@@ -90,7 +90,7 @@ class RequestService {
           status,
           complexity,
           sla,
-          description,
+          category_id,
         },
         {
           where: { id },
