@@ -1,6 +1,5 @@
 import RequestService from "../services/requestService.js";
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import {NotFoundError} from "../errors/errors.js";
+import {asyncHandler} from "../middleware/asyncHandler.js";
 import {validateId} from "../middleware/validate.js";
 
 class RequestController {
@@ -21,11 +20,7 @@ class RequestController {
   static getRequestsByUser = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const request = await RequestService.getRequestsByUser(userId);
-    if (request) {
-      res.json(request);
-    }else{
-      throw new NotFoundError("Not Found");
-    }
+    res.json(request);
   })
   static createRequest = asyncHandler(async (req, res) => {
     const id = req.user.id;

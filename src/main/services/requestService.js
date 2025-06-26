@@ -1,5 +1,7 @@
 import UserService from "./userService.js";
 import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
+import NotificationService from "./notificationService.js";
+import {NotFoundError} from "../errors/errors.js";
 
 class RequestService {
   static async getAllRequests() {
@@ -16,11 +18,17 @@ class RequestService {
 
   static async createRequest(id, requestData) {
     const user= await UserService.getUserById(id)
-    return await Request.create({
+    const request = await Request.create({
       client_id: id,
       office_id: user.office_id,
       ...requestData
     });
+    NotificationService.sendNotification({
+      userId: id,
+      requestId: request.id,
+      type: 'new_request'
+    });
+    return request;
   }
   static async getRequestsByUser(userId) {
     return await Request.findAll({
@@ -63,24 +71,42 @@ class RequestService {
       if (!data.rejection_reason || data.rejection_reason.trim() === '') {
         throw new Error('Rejection reason is required when status is rejected');
       }
-      return await Request.destroy({where: {id}});
+
+      const request = await Request.findByPk(id);
+      if (!request) {
+        throw new NotFoundError('Request not found');
+      }
+      const destroyResult = await request.destroy();
+
+      NotificationService.sendNotification({
+        userId: request.client_id,
+        requestId: request.id,
+        type: 'reject_request',
+        content: data.rejection_reason
+      })
+      return destroyResult;
     } else if (data.status === 'awaiting_assignment') {
-      console.log(data);
       const { status, complexity, sla, category_id } = data;
       if (!complexity && !sla && !category_id) {
         throw new Error('complexity, sla, description is required when status is awaiting_assignment');
       }
-      return await Request.update(
-        {
-          status,
-          complexity,
-          sla,
-          category_id,
-        },
-        {
-          where: { id },
-        }
-      );
+
+      const request = await Request.findByPk(id);
+      if (!request) {
+        throw new NotFoundError('Request not found');
+      }
+      request.status = status;
+      request.complexity = complexity;
+      request.sla = sla;
+      request.category_id = category_id;
+      await request.save();
+
+      NotificationService.sendNotification({
+        userId: request.client_id,
+        requestId: request.id,
+        type: 'reject_request'
+      })
+      return request;
     }
     throw new Error('Unsupported status value');
   }
