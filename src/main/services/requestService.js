@@ -1,7 +1,6 @@
 import UserService from "./userService.js";
 import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 import NotificationService from "./notificationService.js";
-import {NotFoundError} from "../errors/errors.js";
 
 class RequestService {
   static async getAllRequests() {
