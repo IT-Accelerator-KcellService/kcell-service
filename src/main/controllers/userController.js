@@ -9,11 +9,15 @@ class UserController {
   });
 
   static getUserById = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const user = await UserService.getUserById(id);
+    res.json(user);
+  });
+  static getUserMe = asyncHandler(async (req, res) => {
     const id = req.user.id;
     const user = await UserService.getUserById(id);
     res.json(user);
   });
-
   static createUser = asyncHandler(async (req, res) => {
     const newUser = await UserService.createUser(req.body, req.user.role);
     res.status(201).json(newUser);
