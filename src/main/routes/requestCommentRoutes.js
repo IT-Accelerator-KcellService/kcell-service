@@ -1,6 +1,6 @@
-import { Router } from "express"
+import {Router} from "express"
 import RequestCommentController from "../controllers/requestCommentController.js"
-import { authenticateToken, authorizeRoles } from "../middleware/authMiddleware.js"
+import {authenticateToken} from "../middleware/authMiddleware.js"
 import {validateBody} from "../middleware/validate.js";
 import {CommentDto} from "../dto/RequestComment.dto.js";
 
