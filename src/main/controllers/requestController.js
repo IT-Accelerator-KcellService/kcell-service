@@ -21,11 +21,7 @@ class RequestController {
   static getRequestsByUser = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const request = await RequestService.getRequestsByUser(userId);
-    if (request) {
-      res.json(request);
-    }else{
-      throw new NotFoundError("Not Found");
-    }
+    res.json(request);
   })
   static createRequest = asyncHandler(async (req, res) => {
     const id = req.user.id;

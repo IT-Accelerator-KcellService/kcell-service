@@ -3,8 +3,6 @@ import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 import NotificationService from "./notificationService.js";
 import {NotFoundError} from "../errors/errors.js";
 
-const notificationService = new NotificationService();
-
 class RequestService {
   static async getAllRequests() {
     return await Request.findAll({
@@ -25,7 +23,7 @@ class RequestService {
       office_id: office_id,
       ...requestData
     });
-    notificationService.sendNotification({
+    NotificationService.sendNotification({
       userId: id,
       requestId: request.id,
       type: 'new_request'
@@ -80,7 +78,7 @@ class RequestService {
       }
       const destroyResult = await request.destroy();
 
-      notificationService.sendNotification({
+      NotificationService.sendNotification({
         userId: request.client_id,
         requestId: request.id,
         type: 'reject_request',
@@ -103,7 +101,7 @@ class RequestService {
       request.category_id = category_id;
       await request.save();
 
-      notificationService.sendNotification({
+      NotificationService.sendNotification({
         userId: request.client_id,
         requestId: request.id,
         type: 'reject_request'
