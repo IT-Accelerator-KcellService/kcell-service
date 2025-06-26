@@ -43,13 +43,15 @@ class NotificationService {
         const sender = await User.findByPk(userId);
         let notifTitle;
         let notifContent;
+        let admins;
+        let department_heads;
         switch (type) {
             case 'new_request':
                 if (!sender || !sender.office_id) {
                     throw new Error("Sender or office ID not found");
                 }
 
-                const admins = await User.findAll({
+                admins = await User.findAll({
                     where: {
                         role: 'admin-worker',
                         office_id: sender.office_id
@@ -94,7 +96,7 @@ class NotificationService {
                 });
                 break;
             case 'awaiting_assignment':
-                const department_heads = await User.findAll({
+                department_heads = await User.findAll({
                     where: {
                         role: 'department-head'
                     }

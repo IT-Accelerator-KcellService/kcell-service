@@ -1,6 +1,5 @@
 import RequestService from "../services/requestService.js";
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import {NotFoundError} from "../errors/errors.js";
+import {asyncHandler} from "../middleware/asyncHandler.js";
 import {validateId} from "../middleware/validate.js";
 
 class RequestController {
