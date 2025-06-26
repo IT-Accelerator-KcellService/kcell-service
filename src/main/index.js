@@ -16,6 +16,7 @@ import requestRatingRoutes from "./routes/requestRatingRoutes.js";
 import fs from "node:fs";
 import yaml from "yaml";
 import swaggerUi from "swagger-ui-express";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use("/api/executors", executorRoutes)
 app.use("/api/request-photos", requestPhotoRoutes)
 app.use("/api/ratings", requestRatingRoutes)
 app.use("/api/comments", chatMessageRoutes)
+app.use("/api/notifications", notificationRoutes)
 
 app.use(errorHandler);
 

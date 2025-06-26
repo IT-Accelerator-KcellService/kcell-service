@@ -7,6 +7,7 @@ import { RequestPhoto } from './RequestPhoto.js';
 import { RequestComment } from './RequestComment.js';
 import {Plan} from "./Plan.js";
 import {RequestRating} from "./RequestRating.js";
+import {Notification} from "./Notification.js";
 
 
 // Office ↔ Users
@@ -55,6 +56,12 @@ Plan.belongsTo(Office, { foreignKey: 'office_id' });
 RequestRating.belongsTo(Request, { foreignKey: 'request_id', unique: true });
 RequestRating.belongsTo(User, { foreignKey: 'rated_by' });
 
+Notification.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+User.hasMany(Notification, { foreignKey: 'user_id', as: 'notifications' });
+
+Notification.belongsTo(Request, { foreignKey: 'request_id', as: 'request' });
+Request.hasMany(Notification, { foreignKey: 'request_id', as: 'notifications' });
+
 export {
     User,
     Request,
@@ -64,5 +71,6 @@ export {
     Executor,
     RequestPhoto,
     Plan,
-    RequestRating
+    RequestRating,
+    Notification,
 }
