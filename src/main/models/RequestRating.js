@@ -10,7 +10,6 @@ export const RequestRating = sequelize.define('RequestRating', {
     request_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
             model: 'requests',
             key: 'id'
