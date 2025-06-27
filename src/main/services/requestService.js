@@ -1,7 +1,7 @@
 import UserService from "./userService.js";
-import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
+import {Executor, Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 import NotificationService from "./notificationService.js";
-import {NotFoundError} from "../errors/errors.js";
+import {BadRequestError, ForbiddenError, NotFoundError} from "../errors/errors.js";
 import {Op} from "sequelize";
 
 class RequestService {
@@ -141,6 +141,32 @@ class RequestService {
     const otherRequests = allRequests.filter(req => req.client_id !== userId);
 
     return {myRequests, otherRequests};
+  }
+
+  static async assignExecutor(requestId, executorId, userId) {
+    const request = await Request.findByPk(requestId);
+    if (!request) {
+      throw new NotFoundError('Request not found');
+    }
+    const executor = await Executor.findOne({
+      where: { user_id: executorId },
+      include: {
+        model: User,
+        as: 'user'
+      }
+    });
+    if (!executor) {
+      throw new NotFoundError('Executor not found');
+    } else if (executor.role !== 'executor') {
+      throw new BadRequestError('Error executor');
+    } else if (executor.department_id === userId) {
+      throw new ForbiddenError('Forbidden');
+    }
+
+    request.executor_id = executorId;
+    await request.save();
+
+    return request;
   }
 }
 
