@@ -28,7 +28,13 @@ class ServiceCategoryService {
   }
 
   static async deleteServiceCategory(id) {
-    const deleted = await ServiceCategory.destroy(id)
+    const deleted = await ServiceCategory.destroy(
+        {
+          where: {
+            id: id
+          }
+        }
+    )
     if (!deleted) {
       throw new NotFoundError('Service category not found')
     }

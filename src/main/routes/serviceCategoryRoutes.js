@@ -11,21 +11,21 @@ router.get("/:id", authenticateToken, ServiceCategoryController.getServiceCatego
 router.post(
   "/",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager"),
+  authorizeRoles("admin-worker", "manager","department-head"),
   validateBody(ServiceCategoryDto),
   ServiceCategoryController.createServiceCategory,
 )
 router.put(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager"),
+  authorizeRoles("admin-worker", "manager","department-head"),
   validateBody(ServiceCategoryDto),
   ServiceCategoryController.updateServiceCategory,
 )
 router.delete(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager"),
+  authorizeRoles("admin-worker", "manager","department-head"),
   ServiceCategoryController.deleteServiceCategory,
 )
 

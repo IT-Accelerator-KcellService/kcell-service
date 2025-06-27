@@ -1,16 +1,62 @@
-import {Executor, User} from "../models/init.js"
+import {Executor, User,Request,RequestRating} from "../models/init.js"
+import {col, fn, literal} from "sequelize";
 
 class ExecutorService {
   static async getAllExecutors(department_id) {
-    return await Executor.findAll({
-      where: {
-        department_id: department_id
+    const executors = await Executor.findAll({
+      where: { department_id },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'full_name', 'email']
+        },
+        {
+          model: Request,
+          as: 'requests',
+          attributes: [],
+          where: {
+            status: 'execution'
+          },
+          required: false
+        },
+        {
+          model: Request,
+          as: 'requests',
+          attributes: [],
+          required: false,
+          include: [
+            {
+              model: RequestRating,
+              as: 'ratings',
+              attributes: []
+            }
+          ]
+        }
+      ],
+      attributes: {
+        include: [
+          // количество заявок в статусе execution
+          [
+            fn('COUNT', col('requests.id')),
+            'workload'
+          ],
+          // средняя оценка
+          [
+            literal(`(
+            SELECT AVG(rating)
+            FROM request_ratings AS rr
+            INNER JOIN requests AS r ON rr.request_id = r.id
+            WHERE r.executor_id = "Executor"."id"
+          )`),
+            'rating'
+          ]
+        ]
       },
-      include: [{
-        model: User,
-        as: 'user'
-      }]
-    })
+      group: ['Executor.id', 'user.id'],
+    });
+
+    return executors;
   }
   static async getExecutorById(id) {
     return await Executor.findByPk(id)
