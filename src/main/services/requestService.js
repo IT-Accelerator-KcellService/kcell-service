@@ -35,7 +35,16 @@ class RequestService {
     return await Request.findAll({
       where: {
         client_id: userId
-      }
+      },
+      include: [
+        { model: RequestPhoto, as: 'photos' },
+        {
+          model: User,
+          as: 'client',
+          attributes: ['id', 'full_name']
+        },
+        { model: ServiceCategory, as: 'category' },
+      ]
     });
   }
 
