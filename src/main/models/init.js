@@ -22,10 +22,6 @@ Executor.belongsTo(User, { foreignKey: 'user_id' , as: 'user' });
 User.hasMany(Request, { foreignKey: 'client_id', as: 'clientRequests' });
 Request.belongsTo(User, { foreignKey: 'client_id', as: 'client' });
 
-// User (admin) ↔ Request
-User.hasMany(Request, { foreignKey: 'admin_worker_id', as: 'adminRequests' });
-Request.belongsTo(User, { foreignKey: 'admin_worker_id', as: 'admin' });
-
 // Executor ↔ Request
 Executor.hasMany(Request, { foreignKey: 'executor_id', as: 'requests' });
 Request.belongsTo(Executor, { foreignKey: 'executor_id', as: 'executor' });

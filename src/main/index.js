@@ -17,6 +17,7 @@ import fs from "node:fs";
 import yaml from "yaml";
 import swaggerUi from "swagger-ui-express";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import logger from "./utils/winston/logger.js";
 
 
 dotenv.config();
@@ -34,6 +35,16 @@ app.use(express.json())
 
 const swaggerFile = fs.readFileSync('./swagger.yaml', 'utf8');
 const swaggerDocument = yaml.parse(swaggerFile);
+
+app.use((req, res, next) => {
+  logger.info('Incoming request', {
+    userId: req.user?.id || null,
+    endpoint: req.originalUrl,
+    method: req.method,
+  });
+  next();
+});
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/auth", authRoutes)
 app.use("/api/offices", officeRoutes)

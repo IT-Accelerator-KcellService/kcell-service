@@ -114,7 +114,7 @@ class RequestService {
       NotificationService.sendNotification({
         userId: request.client_id,
         requestId: request.id,
-        type: 'reject_request'
+        type: 'awaiting_assignment'
       })
       return request;
     }
@@ -177,6 +177,64 @@ class RequestService {
     await request.save();
 
     return request;
+  }
+
+  static async getExecutorRequests(userId) {
+    const executor = await Executor.findOne({
+      where: {user_id: userId}
+    });
+    const allRequests = await Request.findAll({
+      where: { executor_id: executor.id },
+      include: [
+        { model: RequestPhoto, as: 'photos' },
+        {
+          model: User,
+          as: 'client',
+          attributes: ['id', 'full_name']
+        },
+        { model: ServiceCategory, as: 'category' },
+      ]
+    })
+    const myRequests = allRequests.filter(req => req.client_id === userId);
+    const assignedRequests = allRequests.filter(req => req.status !== 'completed' && req.client_id !== userId);
+    const completedRequests = allRequests.filter(req => req.status === 'completed' && req.client_id !== userId);
+
+    return {assignedRequests, completedRequests, myRequests};
+  }
+
+  static async startRequest(requestId, userId) {
+    const request = await Request.findByPk(requestId, {
+      include: [
+          { model: Executor, as: 'executor' }
+      ]
+    });
+    if (!request) {
+      throw new NotFoundError('Request not found');
+    }
+    if (request.executor.user_id !== userId) {
+      throw new ForbiddenError('Forbidden');
+    }
+    request.status = 'execution';
+    request.date_submitted = Date.now();
+    return await request.save();
+  }
+
+  static async finishRequest(requestId, userId, comment) {
+    const request = await Request.findByPk(requestId, {
+      include: [
+          { model: Executor, as: 'executor' }
+      ]
+    });
+    if (!request) {
+      throw new NotFoundError('Request not found');
+    }
+    if (request.executor.user_id !== userId) {
+      throw new ForbiddenError('Forbidden');
+    }
+    request.status = 'completed';
+    request.actual_completion_date = Date.now();
+    request.comment = comment;
+    return await request.save();
   }
 }
 
