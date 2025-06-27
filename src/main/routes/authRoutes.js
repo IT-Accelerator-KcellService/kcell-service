@@ -10,7 +10,7 @@ router.post('/logout', (req, res) => {
         secure: false,
         sameSite: 'lax',
         path: '/',
-    }).redirect(process.env.FRONTEND_URL + "/login");
+    }).redirect("http://localhost:5173");
 });
 
 export default router
