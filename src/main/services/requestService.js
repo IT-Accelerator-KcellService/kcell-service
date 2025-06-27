@@ -195,10 +195,11 @@ class RequestService {
         { model: ServiceCategory, as: 'category' },
       ]
     })
-    const assignedRequests = allRequests.filter(req => req.status !== 'completed');
-    const completedRequests = allRequests.filter(req => req.status === 'completed');
+    const myRequests = allRequests.filter(req => req.client_id === userId);
+    const assignedRequests = allRequests.filter(req => req.status !== 'completed' && req.client_id !== userId);
+    const completedRequests = allRequests.filter(req => req.status === 'completed' && req.client_id !== userId);
 
-    return {assignedRequests, completedRequests};
+    return {assignedRequests, completedRequests, myRequests};
   }
 
   static async startRequest(requestId, userId) {
