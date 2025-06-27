@@ -56,6 +56,20 @@ class RequestController {
     const data = await RequestService.updateRequestStatus(id, req.body);
     res.status(200).json(data);
   });
+
+  static getDepartmentHeadRequests = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const data = await RequestService.getDepartmentHeadRequests(userId);
+    res.status(200).json(data);
+  });
+
+  static assignExecutor = asyncHandler(async (req, res) => {
+    const executorId = req.params.executor_id;
+    const requestId = req.params.id;
+    const userId = req.user.id;
+    const data = await RequestService.assignExecutor(requestId, executorId, userId);
+    res.status(200).json(data);
+  });
 }
 
 export default RequestController;
