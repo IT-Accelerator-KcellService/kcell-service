@@ -15,8 +15,8 @@ Office.hasMany(User, { foreignKey: 'office_id' });
 User.belongsTo(Office, { foreignKey: 'office_id' });
 
 // Executor ↔ User
-User.hasOne(Executor, { foreignKey: 'user_id' });
-Executor.belongsTo(User, { foreignKey: 'user_id' });
+User.hasOne(Executor, { foreignKey: 'user_id' , as: 'executor' });
+Executor.belongsTo(User, { foreignKey: 'user_id' , as: 'user' });
 
 // User (client) ↔ Request
 User.hasMany(Request, { foreignKey: 'client_id', as: 'clientRequests' });

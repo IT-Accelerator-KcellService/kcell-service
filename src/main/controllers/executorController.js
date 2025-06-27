@@ -3,7 +3,7 @@ import ExecutorService from "../services/executorService.js"
 class ExecutorController {
   static async getAllExecutors(req, res) {
     try {
-      const executors = await ExecutorService.getAllExecutors()
+      const executors = await ExecutorService.getAllExecutors(req.user.id)
       res.json(executors)
     } catch (error) {
       res.status(500).json({ message: error.message })

@@ -1,7 +1,8 @@
 import UserService from "./userService.js";
-import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
+import {Executor, Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 import NotificationService from "./notificationService.js";
-import {NotFoundError} from "../errors/errors.js";
+import {BadRequestError, ForbiddenError, NotFoundError} from "../errors/errors.js";
+import {Op} from "sequelize";
 
 class RequestService {
   static async getAllRequests() {
@@ -109,6 +110,64 @@ class RequestService {
       return request;
     }
     throw new Error('Unsupported status value');
+  }
+
+  static async getDepartmentHeadRequests(userId) {
+    const user = await User.findByPk(userId)
+
+    const allRequests = await Request.findAll({
+      where: {
+        [Op.and]: [
+          { office_id: user.office_id },
+          {
+            [Op.or]: [
+              { client_id: userId },
+              { status: 'awaiting_assignment' }
+            ]
+          }
+        ]
+      },
+      include: [
+        { model: RequestPhoto, as: 'photos' },
+        {
+          model: User,
+          as: 'client',
+          attributes: ['id', 'full_name']
+        },
+        { model: ServiceCategory, as: 'category' },
+      ]
+    });
+    const myRequests = allRequests.filter(req => req.client_id === userId);
+    const otherRequests = allRequests.filter(req => req.client_id !== userId);
+
+    return {myRequests, otherRequests};
+  }
+
+  static async assignExecutor(requestId, executorId, userId) {
+    const request = await Request.findByPk(requestId);
+    if (!request) {
+      throw new NotFoundError('Request not found');
+    }
+    const executor = await Executor.findOne({
+      where: { user_id: executorId },
+      include: {
+        model: User,
+        as: 'user'
+      }
+    });
+    if (!executor) {
+      throw new NotFoundError('Executor not found');
+    } else if (executor.user.role !== 'executor') {
+      throw new BadRequestError('Error executor');
+    } else if (executor.department_id !== userId) {
+      throw new ForbiddenError('Forbidden');
+    }
+
+    request.executor_id = executor.id;
+    request.status = 'assigned';
+    await request.save();
+
+    return request;
   }
 }
 
