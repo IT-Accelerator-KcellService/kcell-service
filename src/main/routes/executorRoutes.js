@@ -7,7 +7,7 @@ const router = Router()
 router.get(
   "/",
   authenticateToken,
-  authorizeRoles("admin-worker", "department-head", "manager"),
+  authorizeRoles("department-head"),
   ExecutorController.getAllExecutors,
 )
 router.get("/:id", authenticateToken, ExecutorController.getExecutorById)

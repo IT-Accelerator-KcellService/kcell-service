@@ -1,8 +1,16 @@
-import {Executor} from "../models/init.js"
+import {Executor, User} from "../models/init.js"
 
 class ExecutorService {
-  static async getAllExecutors() {
-    return await Executor.findAll()
+  static async getAllExecutors(department_id) {
+    return await Executor.findAll({
+      where: {
+        department_id: department_id
+      },
+      include: [{
+        model: User,
+        as: 'user'
+      }]
+    })
   }
   static async getExecutorById(id) {
     return await Executor.findByPk(id)
