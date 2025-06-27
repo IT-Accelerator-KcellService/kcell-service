@@ -33,4 +33,11 @@ router.patch(
     RequestController.updateRequestStatus
 )
 
+router.get(
+    "/department-head/me",
+    authenticateToken,
+    authorizeRoles("department-head"),
+    RequestController.getDepartmentHeadRequests
+)
+
 export default router

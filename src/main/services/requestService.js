@@ -2,6 +2,7 @@ import UserService from "./userService.js";
 import {Request, RequestPhoto, ServiceCategory, User} from "../models/init.js"
 import NotificationService from "./notificationService.js";
 import {NotFoundError} from "../errors/errors.js";
+import {Op} from "sequelize";
 
 class RequestService {
   static async getAllRequests() {
@@ -109,6 +110,37 @@ class RequestService {
       return request;
     }
     throw new Error('Unsupported status value');
+  }
+
+  static async getDepartmentHeadRequests(userId) {
+    const user = await User.findByPk(userId)
+
+    const allRequests = await Request.findAll({
+      where: {
+        [Op.and]: [
+          { office_id: user.office_id },
+          {
+            [Op.or]: [
+              { client_id: userId },
+              { status: 'awaiting_assignment' }
+            ]
+          }
+        ]
+      },
+      include: [
+        { model: RequestPhoto, as: 'photos' },
+        {
+          model: User,
+          as: 'client',
+          attributes: ['id', 'full_name']
+        },
+        { model: ServiceCategory, as: 'category' },
+      ]
+    });
+    const myRequests = allRequests.filter(req => req.client_id === userId);
+    const otherRequests = allRequests.filter(req => req.client_id !== userId);
+
+    return {myRequests, otherRequests};
   }
 }
 
