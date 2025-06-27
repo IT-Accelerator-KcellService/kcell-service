@@ -200,6 +200,41 @@ class RequestService {
 
     return {assignedRequests, completedRequests};
   }
+
+  static async startRequest(requestId, userId) {
+    const request = await Request.findByPk(requestId, {
+      include: [
+          { model: Executor, as: 'executor' }
+      ]
+    });
+    if (!request) {
+      throw new NotFoundError('Request not found');
+    }
+    if (request.executor.user_id !== userId) {
+      throw new ForbiddenError('Forbidden');
+    }
+    request.status = 'execution';
+    request.date_submitted = Date.now();
+    return await request.save();
+  }
+
+  static async finishRequest(requestId, userId, comment) {
+    const request = await Request.findByPk(requestId, {
+      include: [
+          { model: Executor, as: 'executor' }
+      ]
+    });
+    if (!request) {
+      throw new NotFoundError('Request not found');
+    }
+    if (request.executor.user_id !== userId) {
+      throw new ForbiddenError('Forbidden');
+    }
+    request.status = 'completed';
+    request.actual_completion_date = Date.now();
+    request.comment = comment;
+    return await request.save();
+  }
 }
 
 export default RequestService

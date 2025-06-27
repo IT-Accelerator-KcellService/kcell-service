@@ -76,6 +76,21 @@ class RequestController {
     const data = await RequestService.getExecutorRequests(userId);
     res.status(200).json(data);
   });
+
+  static startRequest = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const requestId = req.params.id;
+    const data = await RequestService.startRequest(requestId, userId)
+    res.status(200).json(data);
+  });
+
+  static finishRequest = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const requestId = req.params.id;
+    const comment = req.comment;
+    const data = await RequestService.finishRequest(requestId, userId, comment)
+    res.status(200).json(data);
+  });
 }
 
 export default RequestController;

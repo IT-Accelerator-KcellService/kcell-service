@@ -47,5 +47,17 @@ router.get(
     authorizeRoles("executor"),
     RequestController.getExecutorRequests
 )
+router.patch(
+    "/:id/execute",
+    authenticateToken,
+    authorizeRoles("executor"),
+    RequestController.startRequest
+)
+router.patch(
+    "/:id/complete",
+    authenticateToken,
+    authorizeRoles("executor"),
+    RequestController.finishRequest
+)
 
 export default router
