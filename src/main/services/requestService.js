@@ -157,13 +157,14 @@ class RequestService {
     });
     if (!executor) {
       throw new NotFoundError('Executor not found');
-    } else if (executor.role !== 'executor') {
+    } else if (executor.user.role !== 'executor') {
       throw new BadRequestError('Error executor');
-    } else if (executor.department_id === userId) {
+    } else if (executor.department_id !== userId) {
       throw new ForbiddenError('Forbidden');
     }
 
-    request.executor_id = executorId;
+    request.executor_id = executor.id;
+    request.status = 'assigned';
     await request.save();
 
     return request;
