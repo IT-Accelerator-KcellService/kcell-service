@@ -114,7 +114,7 @@ class RequestService {
       NotificationService.sendNotification({
         userId: request.client_id,
         requestId: request.id,
-        type: 'reject_request'
+        type: 'awaiting_assignment'
       })
       return request;
     }
@@ -177,6 +177,28 @@ class RequestService {
     await request.save();
 
     return request;
+  }
+
+  static async getExecutorRequests(userId) {
+    const executor = await Executor.findOne({
+      where: {user_id: userId}
+    });
+    const allRequests = await Request.findAll({
+      where: { executor_id: executor.id },
+      include: [
+        { model: RequestPhoto, as: 'photos' },
+        {
+          model: User,
+          as: 'client',
+          attributes: ['id', 'full_name']
+        },
+        { model: ServiceCategory, as: 'category' },
+      ]
+    })
+    const assignedRequests = allRequests.filter(req => req.status !== 'completed');
+    const completedRequests = allRequests.filter(req => req.status === 'completed');
+
+    return {assignedRequests, completedRequests};
   }
 }
 

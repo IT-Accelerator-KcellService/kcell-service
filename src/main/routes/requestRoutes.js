@@ -6,12 +6,7 @@ import {AdminWorkerRequestStatus} from "../dto/Request.dto.js";
 
 const router = Router()
 
-router.post(
-  "/",
-  authenticateToken,
-  authorizeRoles("client", "admin-worker", "manager"),
-  RequestController.createRequest,
-)
+router.post("/", authenticateToken, RequestController.createRequest)
 router.get("/", authenticateToken, RequestController.getAllRequests)
 router.get("/user", authenticateToken, RequestController.getRequestsByUser)
 
@@ -44,6 +39,13 @@ router.patch(
     authenticateToken,
     authorizeRoles("department-head"),
     RequestController.assignExecutor
+)
+
+router.get(
+    "/executor/me",
+    authenticateToken,
+    authorizeRoles("executor"),
+    RequestController.getExecutorRequests
 )
 
 export default router

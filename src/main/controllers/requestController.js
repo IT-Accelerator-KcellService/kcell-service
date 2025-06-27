@@ -70,6 +70,12 @@ class RequestController {
     const data = await RequestService.assignExecutor(requestId, executorId, userId);
     res.status(200).json(data);
   });
+
+  static getExecutorRequests = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const data = await RequestService.getExecutorRequests(userId);
+    res.status(200).json(data);
+  });
 }
 
 export default RequestController;
