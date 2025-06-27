@@ -27,8 +27,9 @@ User.hasMany(Request, { foreignKey: 'admin_worker_id', as: 'adminRequests' });
 Request.belongsTo(User, { foreignKey: 'admin_worker_id', as: 'admin' });
 
 // Executor ↔ Request
-Executor.hasMany(Request, { foreignKey: 'executor_id' });
-Request.belongsTo(Executor, { foreignKey: 'executor_id' });
+Executor.hasMany(Request, { foreignKey: 'executor_id', as: 'requests' });
+Request.belongsTo(Executor, { foreignKey: 'executor_id', as: 'executor' });
+
 
 // Office ↔ Request
 Office.hasMany(Request, { foreignKey: 'office_id' });
@@ -53,7 +54,8 @@ RequestComment.belongsTo(User, { foreignKey: 'sender_id', as: 'user' });
 Plan.belongsTo(User, { foreignKey: 'department_id' });
 Plan.belongsTo(Office, { foreignKey: 'office_id' });
 
-RequestRating.belongsTo(Request, { foreignKey: 'request_id', unique: true });
+RequestRating.belongsTo(Request, { foreignKey: 'request_id', unique: true});
+Request.hasMany(RequestRating, { foreignKey: 'request_id', as: 'ratings' });
 RequestRating.belongsTo(User, { foreignKey: 'rated_by' });
 
 Notification.belongsTo(User, { foreignKey: 'user_id', as: 'user' });

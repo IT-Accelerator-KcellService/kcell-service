@@ -11,14 +11,14 @@ router.get("/:id", authenticateToken, ServiceCategoryController.getServiceCatego
 router.post(
   "/",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager","department_head"),
+  authorizeRoles("admin-worker", "manager","department-head"),
   validateBody(ServiceCategoryDto),
   ServiceCategoryController.createServiceCategory,
 )
 router.put(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin-worker", "manager","department_head"),
+  authorizeRoles("admin-worker", "manager","department-head"),
   validateBody(ServiceCategoryDto),
   ServiceCategoryController.updateServiceCategory,
 )

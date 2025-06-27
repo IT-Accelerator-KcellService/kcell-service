@@ -9,7 +9,7 @@ const router = Router()
 router.post(
   "/",
   authenticateToken,
-  authorizeRoles("client", "admin-worker", "manager"),
+  authorizeRoles("client", "admin-worker", "manager","department-head"),
   RequestController.createRequest,
 )
 router.get("/", authenticateToken, RequestController.getAllRequests)
