@@ -27,7 +27,9 @@ class OfficeService {
   }
 
   static async deleteOffice(id) {
-    const deleted = await Office.destroy(id)
+    const deleted = await Office.destroy({
+      where: {id: id}
+    })
     if (!deleted) {
       throw new NotFoundError('No Office with id ' + id);
     }
