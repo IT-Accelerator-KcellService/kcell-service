@@ -42,7 +42,7 @@ class RequestCommentService {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'full_name']
+          attributes: ['id', 'full_name', 'role']
         }
       ],
       order: [['timestamp', 'ASC']]
