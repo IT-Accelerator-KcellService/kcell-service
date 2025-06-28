@@ -11,8 +11,8 @@ import {Notification} from "./Notification.js";
 
 
 // Office ↔ Users
-Office.hasMany(User, { foreignKey: 'office_id' });
-User.belongsTo(Office, { foreignKey: 'office_id' });
+Office.hasMany(User, { foreignKey: 'office_id' , as: 'users'});
+User.belongsTo(Office, { foreignKey: 'office_id', as: 'office' });
 
 // Executor ↔ User
 User.hasOne(Executor, { foreignKey: 'user_id' , as: 'executor' });
