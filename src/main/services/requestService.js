@@ -7,7 +7,15 @@ import {Op} from "sequelize";
 class RequestService {
   static async getAllRequests() {
     return await Request.findAll({
-      include: [{ model: RequestPhoto, as: 'photos' }],
+      include: [
+        { model: RequestPhoto, as: 'photos' },
+        {
+          model: User,
+          as: 'client',
+          attributes: ['id', 'full_name']
+        },
+        { model: ServiceCategory, as: 'category' },
+      ],
     })
   }
 

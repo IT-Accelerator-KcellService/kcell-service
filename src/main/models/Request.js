@@ -37,7 +37,8 @@ export const Request = sequelize.define('Request', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
         allowNull: false
-    }
+    },
+    comment: { type: DataTypes.STRING(255), allowNull: true },
 
 }, {
     tableName: 'requests',
