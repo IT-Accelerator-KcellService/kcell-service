@@ -22,6 +22,6 @@ router.post(
     UserController.createUser
 )
 router.put("/:id", authenticateToken, validateBody(UpdateUserDto), UserController.updateUser)
-router.delete("/:id", authenticateToken, authorizeRoles("admin-worker", "manager"), UserController.deleteUser)
+router.delete("/:id", authenticateToken, authorizeRoles("admin-worker", "manager","department-head"), UserController.deleteUser)
 
 export default router
