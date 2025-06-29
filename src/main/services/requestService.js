@@ -27,7 +27,14 @@ class RequestService {
 
   static async getRequestById(id) {
     return await Request.findByPk(id, {
-      include: [{ model: RequestPhoto, as: "photos" }]
+      include: [
+          { model: RequestPhoto, as: "photos" },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        }]
     })
   }
 
@@ -58,6 +65,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     });
   }
@@ -82,6 +95,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     });
     const myRequests = allRequests.filter(req => req.client_id === id);
@@ -158,6 +177,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     });
     const myRequests = allRequests.filter(req => req.client_id === userId);
@@ -207,6 +232,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     })
     const myRequests = allRequests.filter(req => req.client_id === userId);
