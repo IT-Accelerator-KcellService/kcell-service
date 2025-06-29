@@ -1,4 +1,4 @@
-import {Executor, User} from "../models/init.js"
+import {Executor, Office, User} from "../models/init.js"
 import {ForbiddenError, NotFoundError} from "../errors/errors.js";
 import {getHashedPassword} from "../utils/bcrypt/BCryptService.js";
 import logger from "../utils/winston/logger.js";
@@ -10,7 +10,11 @@ class UserService {
   }
 
   static async getUserById(id) {
-    const user = await User.findByPk(id)
+    const user = await User.findByPk(id, {
+      include: [
+        {model: Office, as: "office"},
+      ]
+    })
     if (!user) {
       throw new NotFoundError(`User not found`)
     }

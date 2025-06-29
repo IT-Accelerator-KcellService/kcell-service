@@ -23,7 +23,7 @@ class AuthService {
     const token = generateToken(user);
     setTokenCookie(res, token);
 
-    return res.status(200).json({success: true,role: user.role});
+    return res.status(200).json({success: true,role: user.role, token: token});
   }
 }
 export default AuthService;

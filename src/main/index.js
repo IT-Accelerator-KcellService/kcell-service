@@ -27,28 +27,10 @@ const app = express()
 const PORT = process.env.PORT || 3001
 app.use(cookieParser());
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'https://kcell-service.vercel.app'
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://kcell-service.vercel.app'],
   credentials: true
 }));
-
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
-
 app.use(express.json())
 
 const swaggerFile = fs.readFileSync('./swagger.yaml', 'utf8');
