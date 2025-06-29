@@ -35,6 +35,32 @@ class NotificationService {
         }
         return await Notification.destroy({where: {id}})
     }
+    static async sendPasswordNotification({ userId, rawPassword }) {
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            throw new NotFoundError('User not found');
+        }
+
+        const title = 'Добро пожаловать!';
+        const content = `Ваш аккаунт был создан. Ваш пароль: ${rawPassword}`;
+
+        // Сохраняем уведомление в БД
+        await Notification.create({
+            user_id: user.id,
+            title,
+            content,
+            is_read: false
+        });
+
+        // Отправляем email через SendGrid
+        await sgMail.send({
+            to: user.email,
+            from: process.env.SENDGRID_EMAIL_FROM,
+            subject: title,
+            text: content
+        });
+    }
 
     static async sendNotification({ userId, requestId, type, content = null }) {
         if (!userId || !type) {
