@@ -1,5 +1,5 @@
 import {Executor, User,Request,RequestRating} from "../models/init.js"
-import {col, fn, literal} from "sequelize";
+import {col, fn, literal, where} from "sequelize";
 
 class ExecutorService {
   static async getAllExecutors(department_id) {
@@ -60,6 +60,11 @@ class ExecutorService {
   }
   static async getExecutorById(id) {
     return await Executor.findByPk(id)
+  }
+  static async getExecutorByUserId(id) {
+    return await Executor.findOne({
+      user_id : id,
+    })
   }
   static async createExecutor(executorData) {
     return await Executor.create(executorData)

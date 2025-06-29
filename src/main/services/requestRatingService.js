@@ -1,5 +1,6 @@
-import {RequestRating} from "../models/init.js";
-
+import {RequestRating,Request} from "../models/init.js";
+import {Op} from "sequelize";
+import ExecutorService from "../services/executorService.js"
 export const createRating = async (rated_by,request_id,rating) => {
     const existing = await RequestRating.findOne({
         where: { request_id, rated_by }
@@ -19,6 +20,37 @@ export const createRating = async (rated_by,request_id,rating) => {
 export const getAllRatings = async () => {
     return await RequestRating.findAll();
 };
+export const getRatingsByExecutor = async (userId) => {
+    const executor = await ExecutorService.getExecutorByUserId(userId);
+    if (!executor) return [];
+
+    const requests = await Request.findAll({
+        where: {
+            executor_id: executor.id,
+            status: 'completed'
+        },
+        attributes: ['id']
+    });
+
+    const requestIds = requests.map(req => req.id);
+    if (requestIds.length === 0) return [];
+
+    const ratings = await RequestRating.findAll({
+        where: {
+            request_id: {
+                [Op.in]: requestIds
+            }
+        },
+        attributes: [
+            'request_id',
+            [RequestRating.sequelize.fn('COUNT', RequestRating.sequelize.col('id')), 'rating']
+        ],
+        group: ['request_id']
+    });
+
+    return ratings;
+}
+
 export const  getRatingsByUser= async (userId,id)=> {
     return await RequestRating.findAll({
         where: {

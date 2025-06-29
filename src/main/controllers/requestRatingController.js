@@ -26,6 +26,14 @@ export const getRequestRatingById = asyncHandler(async (req, res) => {
     }
     res.json(rating);
 });
+export const getRequestRatingByExecutor = asyncHandler(async (req, res) => {
+    const userId=req.user.id;
+    const rating = await ratingService.getRatingsByExecutor(userId);
+    if (!rating) {
+        return res.status(404).json({ message: "Оценка не найдена" });
+    }
+    res.json(rating);
+});
 export const getRequestRatingByUser = asyncHandler(async (req, res) => {
     const userId=req.user.id;
     const id = req.params.id;
