@@ -1,5 +1,5 @@
 import {Executor, User,Request,RequestRating} from "../models/init.js"
-import {col, fn, literal, where} from "sequelize";
+import {col, fn, literal} from "sequelize";
 
 class ExecutorService {
   static async getAllExecutors(department_id) {
