@@ -2,11 +2,20 @@ import NotificationService from "../services/notificationService.js"
 import {asyncHandler} from "../middleware/asyncHandler.js";
 
 class NotificationController {
-  static getMyNotifications = asyncHandler(async (req, res) => {
-      const userId = req.user.id
-      const notifications = await NotificationService.getNotificationsByUserId(userId)
-      res.json(notifications)
-  })
+    static getMyNotifications = asyncHandler(async (req, res) => {
+        const userId = req.user.id;
+
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+
+        const notifications = await NotificationService.getNotificationsByUserId(
+            userId,
+            page,
+            pageSize
+        );
+
+        res.json(notifications);
+    });
 
   static markAsRead = asyncHandler(async (req, res) => {
       const id = req.params.id
