@@ -28,13 +28,16 @@ class RequestService {
   static async getRequestById(id) {
     return await Request.findByPk(id, {
       include: [
-          { model: RequestPhoto, as: "photos" },
+        { model: RequestPhoto, as: "photos" },
         {
           model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
           include: [
             { model: User, as: 'user' , attributes: ['id', 'full_name'] },
           ]
-        }]
+        },
+        { model: User, as: 'client', attributes: ['id', 'full_name'] },
+        { model: ServiceCategory, as: 'category' }
+        ]
     })
   }
 
@@ -50,8 +53,9 @@ class RequestService {
       requestId: request.id,
       type: 'new_request'
     });
-    return request;
+    return await this.getRequestById(request.id);
   }
+
   static async getRequestsByUser(userId) {
     return await Request.findAll({
       where: {
