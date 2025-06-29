@@ -5,12 +5,25 @@ import {ForbiddenError, NotFoundError} from "../errors/errors.js";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class NotificationService {
-    static async getNotificationsByUserId(userId) {
-        return await Notification.findAll({
+    static async getNotificationsByUserId(userId, page = 1, pageSize = 10) {
+        const offset = (page - 1) * pageSize;
+
+        const { count, rows } = await Notification.findAndCountAll({
             where: { user_id: userId },
-            order: [['created_at', 'DESC']]
-        })
+            order: [['created_at', 'DESC']],
+            limit: pageSize,
+            offset: offset,
+        });
+
+        return {
+            notifications: rows,
+            page,
+            pageSize,
+            total: count,
+            totalPages: Math.ceil(count / pageSize),
+        };
     }
+
 
     static async markAsRead(id, userId) {
         const notification = await Notification.findByPk(id)
