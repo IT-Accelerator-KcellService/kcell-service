@@ -19,7 +19,8 @@ class UserController {
     res.json(user);
   });
   static createUser = asyncHandler(async (req, res) => {
-    const newUser = await UserService.createUser(req.body, req.user.role);
+    const id = req.user.id;
+    const newUser = await UserService.createUser(id,req.body, req.user.role);
     res.status(201).json(newUser);
   });
 
