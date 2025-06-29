@@ -14,6 +14,12 @@ class RequestService {
           as: 'client',
           attributes: ['id', 'full_name']
         },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+              { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
         { model: ServiceCategory, as: 'category' },
       ],
     })
