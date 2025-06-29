@@ -14,6 +14,12 @@ class RequestService {
           as: 'client',
           attributes: ['id', 'full_name']
         },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+              { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
         { model: ServiceCategory, as: 'category' },
       ],
     })
@@ -21,7 +27,17 @@ class RequestService {
 
   static async getRequestById(id) {
     return await Request.findByPk(id, {
-      include: [{ model: RequestPhoto, as: "photos" }]
+      include: [
+        { model: RequestPhoto, as: "photos" },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
+        { model: User, as: 'client', attributes: ['id', 'full_name'] },
+        { model: ServiceCategory, as: 'category' }
+        ]
     })
   }
 
@@ -37,8 +53,9 @@ class RequestService {
       requestId: request.id,
       type: 'new_request'
     });
-    return request;
+    return await this.getRequestById(request.id);
   }
+
   static async getRequestsByUser(userId) {
     return await Request.findAll({
       where: {
@@ -52,6 +69,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     });
   }
@@ -76,6 +99,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     });
     const myRequests = allRequests.filter(req => req.client_id === id);
@@ -152,6 +181,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     });
     const myRequests = allRequests.filter(req => req.client_id === userId);
@@ -201,6 +236,12 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         { model: ServiceCategory, as: 'category' },
+        {
+          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          include: [
+            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+          ]
+        },
       ]
     })
     const myRequests = allRequests.filter(req => req.client_id === userId);

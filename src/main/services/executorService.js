@@ -61,6 +61,11 @@ class ExecutorService {
   static async getExecutorById(id) {
     return await Executor.findByPk(id)
   }
+  static async getExecutorByUserId(id) {
+    return await Executor.findOne({
+      user_id : id,
+    })
+  }
   static async createExecutor(executorData) {
     return await Executor.create(executorData)
   }
