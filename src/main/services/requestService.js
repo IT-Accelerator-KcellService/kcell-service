@@ -131,7 +131,6 @@ class RequestService {
 
       NotificationService.sendNotification({
         userId: request.client_id,
-        requestId: request.id,
         type: 'reject_request',
         content: data.rejection_reason
       })

@@ -121,7 +121,6 @@ class NotificationService {
 
                 await Notification.create({
                     user_id: userId,
-                    request_id: requestId,
                     title: notifTitle,
                     content: content,
                     is_read: false
