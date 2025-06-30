@@ -25,10 +25,35 @@ class UserService {
   static async createUser(id, userData, user_role) {
     const currentUser = await UserService.getUserById(id);
 
-    if (['client', 'department-head'].includes(userData.role)) {
-      if (user_role !== 'admin-worker' && user_role !== 'manager') {
+    if (['client', 'department-head', 'manager', 'admin-worker'].includes(userData.role)) {
+      if (user_role !== 'manager') {
         throw new ForbiddenError('Forbidden');
       }
+      const tx = await sequelize.transaction();
+      try {
+        // Генерация и хэширование пароля
+        const rawPassword = randomString(10);
+        const hashedPassword = await getHashedPassword(rawPassword);
+
+        const newUser = await User.create({
+          ...userData,
+          office_id: userData.office_id,
+          password: hashedPassword
+        }, {transaction: tx});
+
+        await tx.commit();
+
+        await NotificationService.sendPasswordNotification({
+          userId: newUser.id,
+          rawPassword
+        });
+        return "Successfully created";
+      } catch (err) {
+        await tx.rollback();
+        logger.error(`Error creating user: ${JSON.stringify(userData)} — ${err.message}`);
+        throw err;
+      }
+
     } else if (userData.role === 'executor') {
       if (user_role !== 'department-head') {
         throw new ForbiddenError('Forbidden');
