@@ -21,8 +21,8 @@ export const getAllRatings = async () => {
     return await RequestRating.findAll();
 };
 export const getRatingsByExecutor = async (userId) => {
-    const executor = await ExecutorService.getExecutorByUserId(userId);
-    if (!executor) return [];
+    const executor = await ExecutorService.getExecutorByUserId(userId)
+    if (!executor) return []
 
     const requests = await Request.findAll({
         where: {
@@ -30,10 +30,10 @@ export const getRatingsByExecutor = async (userId) => {
             status: 'completed'
         },
         attributes: ['id']
-    });
+    })
 
-    const requestIds = requests.map(req => req.id);
-    if (requestIds.length === 0) return [];
+    const requestIds = requests.map(req => req.id)
+    if (requestIds.length === 0) return []
 
     const ratings = await RequestRating.findAll({
         where: {
@@ -43,12 +43,16 @@ export const getRatingsByExecutor = async (userId) => {
         },
         attributes: [
             'request_id',
-            [RequestRating.sequelize.fn('COUNT', RequestRating.sequelize.col('id')), 'rating']
+            [RequestRating.sequelize.fn('AVG', RequestRating.sequelize.col('rating')), 'average_rating']
         ],
-        group: ['request_id']
-    });
+        group: ['request_id'],
+        raw: true
+    })
 
-    return ratings;
+    return ratings.map(r => ({
+        request_id: r.request_id,
+        rating: parseFloat(r.average_rating).toFixed(0)
+    }))
 }
 
 export const  getRatingsByUser= async (userId,id)=> {
