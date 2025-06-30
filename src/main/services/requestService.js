@@ -123,7 +123,9 @@ class RequestService {
       if (!request) {
         throw new NotFoundError('Request not found');
       }
-      const destroyResult = await request.destroy();
+      const destroyResult = await request.destroy({
+        where: {id: request.id}
+      });
 
       NotificationService.sendNotification({
         userId: request.client_id,
