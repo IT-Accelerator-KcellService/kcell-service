@@ -231,7 +231,12 @@ class RequestService {
       where: {user_id: userId}
     });
     const allRequests = await Request.findAll({
-      where: { executor_id: executor.id },
+      where: {
+        [Op.or]: [
+          { executor_id: executor.id },
+          { client_id: userId }
+        ]
+      },
       include: [
         { model: RequestPhoto, as: 'photos' },
         {
@@ -249,8 +254,8 @@ class RequestService {
       ]
     })
     const myRequests = allRequests.filter(req => req.client_id === userId);
-    const assignedRequests = allRequests.filter(req => req.status !== 'completed' && req.client_id !== userId);
-    const completedRequests = allRequests.filter(req => req.status === 'completed' && req.client_id !== userId);
+    const assignedRequests = allRequests.filter(req => req.status !== 'completed' && req.client_id !== userId && req.executor_id === userId);
+    const completedRequests = allRequests.filter(req => req.status === 'completed' && req.client_id !== userId && req.executor_id === userId);
 
     return {assignedRequests, completedRequests, myRequests};
   }
