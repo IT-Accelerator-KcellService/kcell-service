@@ -254,8 +254,8 @@ class RequestService {
       ]
     })
     const myRequests = allRequests.filter(req => req.client_id === userId);
-    const assignedRequests = allRequests.filter(req => req.status !== 'completed' && req.client_id !== userId && req.executor_id === userId);
-    const completedRequests = allRequests.filter(req => req.status === 'completed' && req.client_id !== userId && req.executor_id === userId);
+    const assignedRequests = allRequests.filter(req => req.status !== 'completed' && req.client_id !== userId);
+    const completedRequests = allRequests.filter(req => req.status === 'completed' && req.client_id !== userId);
 
     return {assignedRequests, completedRequests, myRequests};
   }
