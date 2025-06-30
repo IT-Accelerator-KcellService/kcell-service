@@ -93,7 +93,9 @@ class UserService {
   }
 
   static async updateUser(id, updateData) {
-    const updatedUser = await User.update(id, updateData)
+    const updatedUser = await User.update(updateData, {
+      where: {id: id}
+    })
     if (!updatedUser) {
       throw new NotFoundError(`User not found`)
     }

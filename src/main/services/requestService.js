@@ -80,7 +80,9 @@ class RequestService {
   }
 
   static async updateRequest(id, updateData) {
-    return await Request.update(id, updateData)
+    return await Request.update(updateData, {
+      where: {id:id}
+    })
   }
 
   static async deleteRequest(id) {

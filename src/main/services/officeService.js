@@ -19,7 +19,9 @@ class OfficeService {
   }
 
   static async updateOffice(id, updateData) {
-    const updatedOffice = await Office.update(id, updateData)
+    const updatedOffice = await Office.update(updateData, {
+      where: {id: id}
+    })
     if (!updatedOffice) {
       throw new NotFoundError('No Office with id ' + id);
     }

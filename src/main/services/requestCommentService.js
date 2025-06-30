@@ -19,7 +19,9 @@ class RequestCommentService {
     return await RequestComment.create(messageData)
   }
 
-  static async updateChatMessage(id, updateData) {
+  static async updateChatMessage(updateData, {
+    where: {id: id}
+  }) {
     const [updated] = await RequestComment.update(updateData, { where: { id } });
     if (!updated) {
       throw new NotFoundError("Chat not found")

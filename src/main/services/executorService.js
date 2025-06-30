@@ -70,10 +70,14 @@ class ExecutorService {
     return await Executor.create(executorData)
   }
   static async updateExecutor(id, updateData) {
-    return await Executor.update(id, updateData)
+    return await Executor.update(updateData, {
+      where: {id: id}
+    })
   }
   static async deleteExecutor(id) {
-    return await Executor.destroy(id)
+    return await Executor.destroy({
+      where: {id: id}
+    })
   }
 }
 
