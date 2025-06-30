@@ -101,7 +101,9 @@ class UserService {
   }
 
   static async deleteUser(id) {
-    const deletedUser = await User.destroy(id)
+    const deletedUser = await User.destroy({
+      where: {id: id}
+    })
     if (!deletedUser) {
       throw new NotFoundError(`User not found`)
     }
