@@ -56,6 +56,9 @@ app.use("/api/request-photos", requestPhotoRoutes)
 app.use("/api/ratings", requestRatingRoutes)
 app.use("/api/comments", chatMessageRoutes)
 app.use("/api/notifications", notificationRoutes)
+app.get('/loaderio-4a70b4ed5b728c02002be667ca03f516.txt', (req, res) => {
+  res.send('loaderio-4a70b4ed5b728c02002be667ca03f516')
+})
 
 app.use(errorHandler);
 
