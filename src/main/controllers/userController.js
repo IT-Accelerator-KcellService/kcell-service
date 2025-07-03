@@ -25,13 +25,13 @@ class UserController {
   });
 
   static updateUser = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id);
+    const id = req.params.id;
     const updatedUser = await UserService.updateUser(id, req.body);
     res.json(updatedUser);
   });
 
   static deleteUser = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id);
+    const id = req.params.id;
     await UserService.deleteUser(id);
     res.status(204).send();
   });

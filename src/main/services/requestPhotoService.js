@@ -25,14 +25,16 @@ class RequestPhotoService {
     return await RequestPhoto.create(photoData)
   }
   static async updateRequestPhoto(id, updateData) {
-    const photo = await RequestPhoto.update(id, updateData)
+    const photo = await RequestPhoto.update(updateData, {
+      where: {id: id}
+    })
     if (!photo) {
       throw new NotFoundError('Request photo not found')
     }
     return await RequestPhoto.findByPk(id)
   }
   static async deleteRequestPhoto(id) {
-    const photo = await RequestPhoto.destroy(id)
+    const photo = await RequestPhoto.destroy({where: {id: id}})
     if (!photo) {
       throw new NotFoundError('Request photo not found')
     }
