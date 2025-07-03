@@ -1,6 +1,5 @@
-import {Executor, User,Request,RequestRating} from "../models/init.js"
+import {Executor, Request, RequestRating, User} from "../models/init.js"
 import {col, fn, literal} from "sequelize";
-import UserService from "./userService.js";
 import logger from "../utils/winston/logger.js";
 
 class ExecutorService {
