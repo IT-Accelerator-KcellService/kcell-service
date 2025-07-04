@@ -1,4 +1,3 @@
-// services/AIService.js
 import axios from 'axios'
 
 export default {
@@ -63,11 +62,13 @@ ${photoDescriptions}
 
                 return JSON.parse(jsonText);
             } catch (error) {
+                console.log(error);
                 console.error("AI analysis error:", content); // можно залогировать весь текст
                 throw new Error("AI analysis failed");
             }
 
         }catch (error) {
+            console.error("AI analysis error:", error);
             throw new Error("AI analysis failed");
         }
 
