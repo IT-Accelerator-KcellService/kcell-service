@@ -5,8 +5,12 @@ import {BadRequestError, ForbiddenError, NotFoundError} from "../errors/errors.j
 import {Op} from "sequelize";
 
 class RequestService {
-  static async getAllRequests() {
-    return await Request.findAll({
+  static async getAllRequests(page = 1, pageSize = 10) {
+    const offset = (page - 1) * pageSize;
+
+    const { count, rows } = await Request.findAndCountAll({
+      offset,
+      limit: pageSize,
       include: [
         { model: RequestPhoto, as: 'photos' },
         {
@@ -15,15 +19,27 @@ class RequestService {
           attributes: ['id', 'full_name']
         },
         {
-          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          model: Executor,
+          as: 'executor',
+          attributes: ['id', 'specialty'],
           include: [
-              { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+            { model: User, as: 'user', attributes: ['id', 'full_name'] }
           ]
         },
-        { model: ServiceCategory, as: 'category' },
+        { model: ServiceCategory, as: 'category' }
       ],
-    })
+      order: [['createdAt', 'DESC']]
+    });
+
+    return {
+      total: count,
+      totalPages: Math.ceil(count / pageSize),
+      page,
+      pageSize,
+      data: rows
+    };
   }
+
 
   static async getRequestById(id) {
     return await Request.findByPk(id, {

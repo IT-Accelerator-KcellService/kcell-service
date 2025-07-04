@@ -4,9 +4,13 @@ import {validateId} from "../middleware/validate.js";
 
 class RequestController {
   static getAllRequests = asyncHandler(async (req, res) => {
-    const requests = await RequestService.getAllRequests();
-    res.json(requests);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    const result = await RequestService.getAllRequests(page, pageSize);
+    res.json(result);
   });
+
 
   static getRequestById = asyncHandler(async (req, res) => {
     const id = validateId(req)
