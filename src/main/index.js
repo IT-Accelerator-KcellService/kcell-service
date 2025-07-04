@@ -47,7 +47,7 @@ app.use((req, res, next) => {
   next();
 });
 
-cron.schedule("0 * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
   console.log("🔁 Запуск AI-проверки заявок (каждый час)...");
   await processRequestsByCron();
 });
