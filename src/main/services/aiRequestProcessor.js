@@ -1,7 +1,7 @@
 import { Request } from "../models/init.js";
-import RequestPhotoService from "../services/RequestPhotoService.js";
+import RequestPhotoService from "./requestPhotoService.js";
 import AIService from "../services/AIService.js";
-import NotificationService from "../services/NotificationService.js";
+import NotificationService from "./notificationService.js";
 
 export async function processRequestsByCron() {
     const requests = await Request.findAll({
