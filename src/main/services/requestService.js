@@ -28,7 +28,7 @@ class RequestService {
         },
         { model: ServiceCategory, as: 'category' }
       ],
-      order: [['createdAt', 'DESC']]
+      order: [['created_date', 'DESC']]
     });
 
     return {
