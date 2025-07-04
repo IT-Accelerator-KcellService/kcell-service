@@ -17,7 +17,7 @@ router.put(
   authorizeRoles("admin-worker", "executor", "manager"),
   RequestController.updateRequest,
 )
-router.delete("/:id", authenticateToken, authorizeRoles("admin-worker", "manager"), RequestController.deleteRequest)
+router.delete("/:id", authenticateToken, authorizeRoles("admin-worker", "manager", "department-head"), RequestController.deleteRequest)
 
 router.get("/admin-worker/me", authenticateToken, authorizeRoles("admin-worker"), RequestController.getAdminWorkerRequests)
 router.patch(

@@ -80,7 +80,9 @@ class RequestService {
   }
 
   static async updateRequest(id, updateData) {
-    return await Request.update(id, updateData)
+    return await Request.update(updateData, {
+      where: {id:id}
+    })
   }
 
   static async deleteRequest(id) {
@@ -123,11 +125,12 @@ class RequestService {
       if (!request) {
         throw new NotFoundError('Request not found');
       }
-      const destroyResult = await request.destroy();
+      const destroyResult = await request.destroy({
+        where: {id: request.id}
+      });
 
       NotificationService.sendNotification({
         userId: request.client_id,
-        requestId: request.id,
         type: 'reject_request',
         content: data.rejection_reason
       })
@@ -227,7 +230,12 @@ class RequestService {
       where: {user_id: userId}
     });
     const allRequests = await Request.findAll({
-      where: { executor_id: executor.id },
+      where: {
+        [Op.or]: [
+          { executor_id: executor.id },
+          { client_id: userId }
+        ]
+      },
       include: [
         { model: RequestPhoto, as: 'photos' },
         {

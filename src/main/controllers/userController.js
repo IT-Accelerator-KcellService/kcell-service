@@ -1,6 +1,5 @@
 import {asyncHandler} from "../middleware/asyncHandler.js";
 import UserService from "../services/userService.js"
-import {validateId} from "../middleware/validate.js";
 
 class UserController {
   static getAllUsers = asyncHandler(async (req, res) => {
@@ -25,13 +24,13 @@ class UserController {
   });
 
   static updateUser = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id);
+    const id = req.params.id;
     const updatedUser = await UserService.updateUser(id, req.body);
     res.json(updatedUser);
   });
 
   static deleteUser = asyncHandler(async (req, res) => {
-    const id = validateId(req.params.id);
+    const id = req.params.id;
     await UserService.deleteUser(id);
     res.status(204).send();
   });

@@ -9,7 +9,18 @@ class ExecutorController {
       res.status(500).json({ message: error.message })
     }
   }
+  static async getAverageRating(req, res) {
+    try {
 
+      const id  = req.user.id;
+      const rating = await ExecutorService.getAverageRatingByExecutorId(id);
+
+      res.json({ id, average_rating: rating.toFixed(2) });
+    } catch (error) {
+      console.error("Ошибка при получении средней оценки исполнителя:", error);
+      res.status(500).json({ error: "Ошибка при получении средней оценки" });
+    }
+  }
   static async getExecutorById(req, res) {
     try {
       const executor = await ExecutorService.getExecutorById(Number.parseInt(req.params.id))

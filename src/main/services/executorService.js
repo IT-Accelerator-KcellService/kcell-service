@@ -1,5 +1,6 @@
-import {Executor, User,Request,RequestRating} from "../models/init.js"
+import {Executor, Request, RequestRating, User} from "../models/init.js"
 import {col, fn, literal} from "sequelize";
+import logger from "../utils/winston/logger.js";
 
 class ExecutorService {
   static async getAllExecutors(department_id) {
@@ -66,14 +67,42 @@ class ExecutorService {
       user_id : id,
     })
   }
+  static async getAverageRatingByExecutorId(userId) {
+    const executor = await ExecutorService.getExecutorByUserId(userId);
+    logger.info(executor)
+    if (!executor) return 0;
+
+    const result = await RequestRating.findOne({
+      attributes: [
+        [fn('AVG', col('rating')), 'average_rating']
+      ],
+      include: [
+        {
+          model: Request,
+          attributes: [],
+          where: {
+            executor_id: executor.id
+          }
+        }
+      ],
+      raw: true
+    });
+
+    return Number(result?.average_rating || 0);
+  }
+
   static async createExecutor(executorData) {
     return await Executor.create(executorData)
   }
   static async updateExecutor(id, updateData) {
-    return await Executor.update(id, updateData)
+    return await Executor.update(updateData, {
+      where: {id: id}
+    })
   }
   static async deleteExecutor(id) {
-    return await Executor.destroy(id)
+    return await Executor.destroy({
+      where: {id: id}
+    })
   }
 }
 

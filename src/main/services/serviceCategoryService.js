@@ -20,7 +20,9 @@ class ServiceCategoryService {
   }
 
   static async updateServiceCategory(id, updateData) {
-    const updated = await ServiceCategory.update(id, updateData)
+    const updated = await ServiceCategory.update(updateData, {
+      where: {id: id}
+    })
     if (!updated) {
       throw new NotFoundError('Service category not found')
     }
