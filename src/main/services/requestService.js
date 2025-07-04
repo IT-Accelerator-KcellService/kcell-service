@@ -116,15 +116,16 @@ class RequestService {
   }
 
   static async updateRequestStatus(id, data) {
+    const request = await Request.findByPk(id);
+    if (!request) {
+      throw new NotFoundError('Request not found');
+    }
+
     if (data.status === 'rejected') {
       if (!data.rejection_reason || data.rejection_reason.trim() === '') {
         throw new Error('Rejection reason is required when status is rejected');
       }
 
-      const request = await Request.findByPk(id);
-      if (!request) {
-        throw new NotFoundError('Request not found');
-      }
       const destroyResult = await request.destroy({
         where: {id: request.id}
       });
