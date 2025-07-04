@@ -1,6 +1,5 @@
 import {asyncHandler} from "../middleware/asyncHandler.js";
 import UserService from "../services/userService.js"
-import {validateId} from "../middleware/validate.js";
 
 class UserController {
   static getAllUsers = asyncHandler(async (req, res) => {
