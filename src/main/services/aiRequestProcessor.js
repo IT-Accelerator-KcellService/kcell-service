@@ -28,7 +28,6 @@ export async function processRequestsByCron() {
                 request.status = "awaiting_assignment";
                 request.complexity = aiResult.complexity;
                 request.sla = aiResult.sla;
-                request.category_id = aiResult.category_id;
                 await request.save();
 
                 await NotificationService.sendNotification({

@@ -23,9 +23,19 @@ class RequestController {
   });
   static getRequestsByUser = asyncHandler(async (req, res) => {
     const userId = req.user.id;
-    const request = await RequestService.getRequestsByUser(userId);
-    res.json(request);
-  })
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    const result = await RequestService.getRequestsByUser(userId, page, pageSize);
+
+    res.json({
+      total: result.count,
+      page,
+      pageSize,
+      requests: result.rows
+    });
+  });
+
   static createRequest = asyncHandler(async (req, res) => {
     const id = req.user.id;
     const newRequest = await RequestService.createRequest(id, req.body);

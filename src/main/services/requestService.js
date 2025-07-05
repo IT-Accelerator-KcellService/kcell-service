@@ -72,11 +72,16 @@ class RequestService {
     return await this.getRequestById(request.id);
   }
 
-  static async getRequestsByUser(userId) {
-    return await Request.findAll({
+  static async getRequestsByUser(userId, page = 1, pageSize = 10) {
+    const offset = (page - 1) * pageSize;
+
+    return await Request.findAndCountAll({
       where: {
         client_id: userId
       },
+      limit: pageSize,
+      offset,
+      order: [['created_date', 'DESC']], // или createdAt, если такое поле есть
       include: [
         { model: RequestPhoto, as: 'photos' },
         {
@@ -84,16 +89,19 @@ class RequestService {
           as: 'client',
           attributes: ['id', 'full_name']
         },
-        { model: ServiceCategory, as: 'category' },
         {
-          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          model: Executor,
+          as: 'executor',
+          attributes: ['id', 'specialty'],
           include: [
-            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+            { model: User, as: 'user', attributes: ['id', 'full_name'] },
           ]
         },
+        { model: ServiceCategory, as: 'category' },
       ]
     });
   }
+
 
   static async updateRequest(id, updateData) {
     return await Request.update(updateData, {
