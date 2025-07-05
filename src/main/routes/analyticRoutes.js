@@ -1,6 +1,6 @@
 import express from "express";
 import {authenticateToken, authorizeRoles} from "../middleware/authMiddleware.js";
-import AnalyticController from "../controllers/AnalyticController.js";
+import AnalyticController from "../controllers/analyticController.js";
 
 const router = express.Router();
 
