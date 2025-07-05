@@ -36,64 +36,6 @@ class AnalyticController {
         res.setHeader('Content-Disposition', 'attachment; filename=analytics_template.pbix');
         return res.sendFile(templatePath);
     });
-
-    // static emailAnalytics = asyncHandler(async (req, res) => {
-    //     const { emails = [] } = req.body;
-    //     if (!emails.length || emails.length > 3) {
-    //         return res.status(400).json({ message: '1 to 3 emails required' });
-    //     }
-    //
-    //     const data = await RequestService.find({});
-    //     const workbook = new ExcelJS.Workbook();
-    //     const sheet = workbook.addWorksheet('Analytics');
-    //
-    //     sheet.columns = [
-    //         { header: 'ID', key: 'id', width: 10 },
-    //         { header: 'Тип', key: 'request_type', width: 15 },
-    //         { header: 'Офис', key: 'office', width: 15 },
-    //         { header: 'Статус', key: 'status', width: 15 },
-    //         { header: 'Дата подачи', key: 'date_submitted', width: 20 },
-    //     ];
-    //
-    //     data.forEach(r => {
-    //         sheet.addRow({
-    //             id: r.id,
-    //             request_type: r.request_type,
-    //             office: r.office,
-    //             status: r.status,
-    //             date_submitted: r.date_submitted,
-    //         });
-    //     });
-    //
-    //     const buffer = await workbook.xlsx.writeBuffer();
-    //
-    //     const transporter = nodemailer.createTransport({
-    //         service: 'gmail',
-    //         auth: {
-    //             user: 'your_email@gmail.com',
-    //             pass: 'your_password_or_app_password',
-    //         },
-    //     });
-    //
-    //     const mailOptions = {
-    //         from: 'your_email@gmail.com',
-    //         to: emails.join(','),
-    //         subject: 'Отчет по заявкам',
-    //         text: 'В приложении файл с аналитикой.',
-    //         attachments: [
-    //             {
-    //                 filename: 'analytics.xlsx',
-    //                 content: buffer,
-    //                 contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    //             },
-    //         ],
-    //     };
-    //
-    //     transporter.sendMail(mailOptions, (err, info) => {
-    //         if (err) return res.status(500).json({ error: err.message });
-    //         res.json({ message: 'Отчет отправлен', info });
-    //     });
-    // })
 }
 
 export default AnalyticController;
