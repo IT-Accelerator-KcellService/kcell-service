@@ -1,7 +1,7 @@
 import { Request } from "../models/init.js";
-import RequestPhotoService from "../services/RequestPhotoService.js";
+import RequestPhotoService from "./requestPhotoService.js";
 import AIService from "../services/AIService.js";
-import NotificationService from "../services/NotificationService.js";
+import NotificationService from "./notificationService.js";
 
 export async function processRequestsByCron() {
     const requests = await Request.findAll({
@@ -28,7 +28,6 @@ export async function processRequestsByCron() {
                 request.status = "awaiting_assignment";
                 request.complexity = aiResult.complexity;
                 request.sla = aiResult.sla;
-                request.category_id = aiResult.category_id;
                 await request.save();
 
                 await NotificationService.sendNotification({
