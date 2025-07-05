@@ -1,10 +1,13 @@
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
     async analyzeRequest(request, photos = []) {
+        // Формируем описание фото
         const photoDescriptions = photos.length > 0
-            ? photos.map((p, i) => `Фото ${i + 1}: ${p.photo_url}`).join('\n') : "Нет прикреплённых фото.";
+            ? photos.map((p, i) => `Фото ${i + 1}: ${p.photo_url}`).join('\n')
+            : "Нет прикреплённых фото.";
 
+        // Формируем промпт
         const prompt = `
 Ты — помощник службы поддержки. Клиент прислал заявку:
 Описание: "${request.description}"
@@ -24,53 +27,84 @@ ${photoDescriptions}
   "complexity": "...",
   "sla": "...",
 }
-`;
+`.trim();
 
         try {
+            // Выполняем запрос к API
             const response = await axios.post(
                 process.env.CHAT_API_URL,
                 {
-                    model: "deepseek-ai/DeepSeek-R1-Turbo",
+                    model: "deepseek/deepseek-chat-v3-0324:free",
                     messages: [
                         {
                             role: "system",
                             content: "Ты должен отвечать только в формате JSON, без пояснений, без тегов или комментариев."
                         },
-                        {role: "user", content: prompt}
+                        { role: "user", content: prompt }
                     ],
-                    temperature: 0.3
+                    temperature: 0.3,
+                    response_format: { type: "json_object" } // Добавляем явное указание формата ответа
                 },
                 {
                     headers: {
                         Authorization: `Bearer ${process.env.API_TOKEN}`,
                         "Content-Type": "application/json"
-                    }
+                    },
+                    timeout: 10000 // 10 секунд таймаут
                 }
             );
 
-            const content = response.data.choices[0].message.content;
-            let jsonText = content.trim();
-
-            try {
-                const start = jsonText.indexOf("{");
-                const end = jsonText.lastIndexOf("}");
-                if (start === -1 || end === -1) {
-                    throw new Error("JSON not found in AI response");
-                }
-
-                jsonText = jsonText.slice(start, end + 1);
-
-                return JSON.parse(jsonText);
-            } catch (error) {
-                console.log(error);
-                console.error("AI analysis error:", content); // можно залогировать весь текст
-                throw new Error("AI analysis failed");
+            // Обрабатываем ответ
+            if (!response.data?.choices?.[0]?.message?.content) {
+                throw new Error("Invalid API response structure");
             }
 
-        }catch (error) {
-            console.error("AI analysis error:", error);
-            throw new Error("AI analysis failed");
-        }
+            const content = response.data.choices[0].message.content;
 
+            try {
+                // Пытаемся найти JSON в ответе
+                const jsonStart = content.indexOf('{');
+                const jsonEnd = content.lastIndexOf('}');
+
+                if (jsonStart === -1 || jsonEnd === -1) {
+                    throw new Error("No JSON found in response");
+                }
+
+                const jsonString = content.slice(jsonStart, jsonEnd + 1);
+                const result = JSON.parse(jsonString);
+
+                // Валидация структуры ответа
+                if (!result.status || (result.status === 'rejected' && !result.rejection_reason) ||
+                    (result.status === 'awaiting_assignment' && (!result.complexity || !result.sla))) {
+                    throw new Error("Invalid response format");
+                }
+
+                return result;
+            } catch (parseError) {
+                console.error("Failed to parse AI response:", {
+                    error: parseError,
+                    rawContent: content
+                });
+                throw new Error("Failed to parse AI response");
+            }
+        } catch (error) {
+            console.error("AI analysis failed:", {
+                error: error.response?.data || error.message,
+                request: {
+                    description: request.description,
+                    photos: photos.map(p => p.photo_url)
+                }
+            });
+
+            // Возвращаем fallback-ответ в случае ошибки
+            return {
+                status: "awaiting_assignment",
+                complexity: "medium",
+                sla: "8h"
+            };
+
+            // Или можно пробросить ошибку дальше:
+            // throw new Error("AI analysis failed: " + error.message);
+        }
     }
 }

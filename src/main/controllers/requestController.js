@@ -4,9 +4,13 @@ import {validateId} from "../middleware/validate.js";
 
 class RequestController {
   static getAllRequests = asyncHandler(async (req, res) => {
-    const requests = await RequestService.getAllRequests();
-    res.json(requests);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    const result = await RequestService.getAllRequests(page, pageSize);
+    res.json(result);
   });
+
 
   static getRequestById = asyncHandler(async (req, res) => {
     const id = validateId(req)
@@ -19,9 +23,19 @@ class RequestController {
   });
   static getRequestsByUser = asyncHandler(async (req, res) => {
     const userId = req.user.id;
-    const request = await RequestService.getRequestsByUser(userId);
-    res.json(request);
-  })
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    const result = await RequestService.getRequestsByUser(userId, page, pageSize);
+
+    res.json({
+      total: result.count,
+      page,
+      pageSize,
+      requests: result.rows
+    });
+  });
+
   static createRequest = asyncHandler(async (req, res) => {
     const id = req.user.id;
     const newRequest = await RequestService.createRequest(id, req.body);
@@ -47,9 +61,13 @@ class RequestController {
   });
 
   static getAdminWorkerRequests = asyncHandler(async (req, res) => {
-    const data = await RequestService.getAdminWorkerRequests(req.user.id);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    const data = await RequestService.getAdminWorkerRequests(req.user.id, page, pageSize);
     res.status(200).json(data);
-  })
+  });
+
 
   static updateRequestStatus = asyncHandler(async (req, res) => {
     const id = validateId(req);
