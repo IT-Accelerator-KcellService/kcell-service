@@ -338,6 +338,11 @@ class RequestService {
     request.comment = comment;
     return await request.save();
   }
+
+  static async findByFilters(filters) {
+    console.log(filters);
+    return await Request.findAll({ where: filters });
+  }
 }
 
 export default RequestService
