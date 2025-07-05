@@ -61,9 +61,13 @@ class RequestController {
   });
 
   static getAdminWorkerRequests = asyncHandler(async (req, res) => {
-    const data = await RequestService.getAdminWorkerRequests(req.user.id);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+
+    const data = await RequestService.getAdminWorkerRequests(req.user.id, page, pageSize);
     res.status(200).json(data);
-  })
+  });
+
 
   static updateRequestStatus = asyncHandler(async (req, res) => {
     const id = validateId(req);

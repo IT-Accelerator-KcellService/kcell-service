@@ -113,12 +113,15 @@ class RequestService {
     return await Request.destroy({ where: { id } });
   }
 
-  static async getAdminWorkerRequests(id) {
-    const user = await User.findByPk(id)
-    const allRequests = await Request.findAll({
+  static async getAdminWorkerRequests(id, page = 1, pageSize = 10) {
+    const user = await User.findByPk(id);
+
+    const offset = (page - 1) * pageSize;
+
+    const { count, rows } = await Request.findAndCountAll({
       where: { office_id: user.office_id },
       include: [
-          { model: RequestPhoto, as: 'photos' },
+        { model: RequestPhoto, as: 'photos' },
         {
           model: User,
           as: 'client',
@@ -126,18 +129,35 @@ class RequestService {
         },
         { model: ServiceCategory, as: 'category' },
         {
-          model: Executor, as: 'executor',  attributes: ['id', 'specialty'],
+          model: Executor,
+          as: 'executor',
+          attributes: ['id', 'specialty'],
           include: [
-            { model: User, as: 'user' , attributes: ['id', 'full_name'] },
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'full_name']
+            }
           ]
-        },
-      ]
+        }
+      ],
+      order: [['created_date', 'DESC']],
+      limit: pageSize,
+      offset
     });
-    const myRequests = allRequests.filter(req => req.client_id === id);
-    const otherRequests = allRequests.filter(req => req.client_id !== id);
 
-    return {myRequests, otherRequests};
+    const myRequests = rows.filter(req => req.client_id === id);
+    const otherRequests = rows.filter(req => req.client_id !== id);
+
+    return {
+      myRequests,
+      otherRequests,
+      total: count,
+      page,
+      pageSize
+    };
   }
+
 
   static async updateRequestStatus(id, data) {
     const request = await Request.findByPk(id);
