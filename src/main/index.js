@@ -18,6 +18,8 @@ import yaml from "yaml";
 import swaggerUi from "swagger-ui-express";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import logger from "./utils/winston/logger.js";
+import {processRequestsByCron} from "./services/aiRequestProcessor.js";
+import * as cron from "node-cron";
 import analyticRoutes from "./routes/analyticRoutes.js";
 
 
@@ -44,6 +46,11 @@ app.use((req, res, next) => {
     method: req.method,
   });
   next();
+});
+
+cron.schedule("*/10 * * * *", async () => {
+  console.log("🔁 Запуск AI-проверки заявок (каждый час)...");
+  await processRequestsByCron();
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
