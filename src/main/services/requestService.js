@@ -340,7 +340,6 @@ class RequestService {
   }
 
   static async findByFilters(filters) {
-    console.log(filters);
     return await Request.findAll({ where: filters });
   }
 }

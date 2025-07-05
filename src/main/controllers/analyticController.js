@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import {asyncHandler} from "../middleware/asyncHandler.js";
 import AnalyticService from "../services/analyticService.js";
 
@@ -7,11 +8,19 @@ class AnalyticController {
         const { format = 'xlsx', office_id, from, to } = req.query;
 
         const filters = {};
-        if (office_id) filters.office_id = office_id;
+        if (office_id) {
+            const parsedOfficeId = parseInt(office_id, 10);
+            if (!isNaN(parsedOfficeId)) {
+                filters.office_id = parsedOfficeId;
+            }
+        }
         if (from || to) {
-            filters.created_date = {};
-            if (from) filters.created_date.$gte = new Date(from);
-            if (to) filters.created_date.$lte = new Date(to);
+            const dateFilter = {};
+            if (from) dateFilter[Op.gte] = new Date(from);
+            if (to) dateFilter[Op.lte] = new Date(to);
+            if (Object.keys(dateFilter).length > 0) {
+                filters.created_date = dateFilter;
+            }
         }
 
         if (format === 'xlsx') {
