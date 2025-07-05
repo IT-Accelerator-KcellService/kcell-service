@@ -293,6 +293,22 @@ class RequestService {
     request.comment = comment;
     return await request.save();
   }
+
+  static async findByFilters(filters) {
+    const whereClause = filters;
+
+    if (filters.created_date) {
+      whereClause.created_date = {};
+      if (filters.created_date.$gte) {
+        whereClause.created_date[Op.gte] = filters.created_date.$gte;
+      }
+      if (filters.created_date.$lte) {
+        whereClause.created_date[Op.lte] = filters.created_date.$lte;
+      }
+    }
+
+    return await Request.findAll({ where: whereClause });
+  }
 }
 
 export default RequestService

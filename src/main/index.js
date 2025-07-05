@@ -18,6 +18,7 @@ import yaml from "yaml";
 import swaggerUi from "swagger-ui-express";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import logger from "./utils/winston/logger.js";
+import analyticRoutes from "./routes/analyticRoutes.js";
 
 
 dotenv.config();
@@ -56,6 +57,7 @@ app.use("/api/request-photos", requestPhotoRoutes)
 app.use("/api/ratings", requestRatingRoutes)
 app.use("/api/comments", chatMessageRoutes)
 app.use("/api/notifications", notificationRoutes)
+app.use('/api/analytics', analyticRoutes);
 app.get('/loaderio-4a70b4ed5b728c02002be667ca03f516.txt', (req, res) => {
   res.send('loaderio-4a70b4ed5b728c02002be667ca03f516')
 })
