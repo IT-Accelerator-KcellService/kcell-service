@@ -1,76 +1,6 @@
 import RequestService from "../services/requestService.js";
-import {Parser} from 'json2csv';
-
-function sanitizeCellValue(val) {
-    if (val === null || val === undefined || typeof val === 'symbol') return '';
-    if (typeof val === 'number') return Number.isFinite(val) ? val : '';
-    if (val instanceof Date) return val.toLocaleDateString('en-CA');
-    if (typeof val === 'object') return JSON.stringify(val);
-    if (typeof val === 'bigint') return val.toString();
-    if (typeof val === 'boolean') return val ? 'true' : 'false';
-    return String(val);
-}
 
 class AnalyticService {
-    static async findByFilters(filters) {
-        const requests = await RequestService.findByFilters(filters);
-
-        const total = requests.length;
-        const byStatus = this.groupBy(requests, 'status');
-        const byType = this.groupBy(requests, 'request_type');
-        const byOffice = this.groupBy(requests, 'office_id');
-        const byDate = this.groupByDate(requests);
-
-        const averageSLA = this.calcAverageSLA(requests);
-        const averageRating = this.calcAverageRating(requests);
-
-        return {
-            total,
-            byStatus,
-            byType,
-            byOffice,
-            averageSLA,
-            averageRating,
-            byDate
-        };
-    }
-
-    static async groupBy(arr, key) {
-        return arr.reduce((acc, cur) => {
-            acc[cur[key]] = (acc[cur[key]] || 0) + 1;
-            return acc;
-        }, {});
-    }
-
-    static async calcAverageSLA(arr) {
-        const durations = arr
-            .filter(r => r.actual_completion_date)
-            .map(r => new Date(r.actual_completion_date) - new Date(r.date_submitted));
-        if (durations.length === 0) return 0;
-        const avg = durations.reduce((a, b) => a + b, 0) / durations.length;
-        return Math.round(avg / 1000 / 60);
-    }
-
-    static async calcAverageRating(arr) {
-        const ratings = arr.map(r => r.rating).filter(r => r != null);
-        if (ratings.length === 0) return 0;
-        return Math.round(ratings.reduce((a, b) => a + b, 0) / ratings.length);
-    }
-
-    static groupByDate(requests) {
-        const grouped = {};
-
-        for (const request of requests) {
-            const date = new Date(request.created_date).toISOString().split("T")[0]; // 'YYYY-MM-DD'
-            if (!grouped[date]) grouped[date] = 0;
-            grouped[date]++;
-        }
-
-        return Object.entries(grouped).map(([date, count]) => ({
-            date,
-            count,
-        })).sort((a, b) => new Date(a.date) - new Date(b.date));
-    }
 
     static async getExcelAnalytics(filters = {}) {
         const { default: ExcelJS } = await import('exceljs');
@@ -128,7 +58,7 @@ class AnalyticService {
         for (const [sheetName, groupData] of Object.entries(groupings)) {
             const hasData = Object.values(groupData).some(list => list.length > 0);
             if (!hasData) continue;
-            const sheet = workbook.addWorksheet(sheetName.replace(/[\[\]\*\/\\\?\:]/g, '').slice(0, 31));
+            const sheet = workbook.addWorksheet(sheetName.replace(/[\]*\\?:]/g, '').slice(0, 31));
             sheet.addRow(["Entity", "Requests", "Avg SLA (min)", "Avg Rating", "Overdue"]);
             sheet.getRow(1).font = { bold: true };
             for (const [entity, items] of Object.entries(groupData)) {
@@ -166,21 +96,7 @@ class AnalyticService {
             rawSheet.addRow(values);
         });
 
-        const buffer = await workbook.xlsx.writeBuffer();
-        return buffer;
-    }
-
-    static async getCSVAnalytics(filters = {}) {
-        const data = await RequestService.findByFilters(filters);
-        const fields = [
-            'id', 'request_type', 'title', 'description', 'client_id',
-            'office_id', 'location_detail', 'status', 'category_id', 'complexity',
-            'sla', 'executor_id', 'plan_id', 'actual_completion_date',
-            'rejection_reason', 'comment', 'date_submitted', 'location',
-            'created_date', 'rating'
-        ];
-        const parser = new Parser({ fields });
-        return parser.parse(data);
+        return await workbook.xlsx.writeBuffer();
     }
 }
 

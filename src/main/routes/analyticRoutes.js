@@ -4,7 +4,6 @@ import AnalyticController from "../controllers/AnalyticController.js";
 
 const router = express.Router();
 
-router.get("/data", authenticateToken, authorizeRoles("manager"), AnalyticController.getAnalyticsData);
 router.get("/export", authenticateToken, authorizeRoles("manager"), AnalyticController.exportAnalytics);
 // router.post("/email", authenticateToken, authorizeRoles("manager"), AnalyticController.emailAnalytics);
 
