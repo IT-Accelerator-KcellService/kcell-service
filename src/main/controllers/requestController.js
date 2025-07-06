@@ -54,7 +54,7 @@ class RequestController {
   static deleteRequest = asyncHandler(async (req, res) => {
     const deleted = await RequestService.deleteRequest(Number.parseInt(req.params.id));
     if (deleted) {
-      res.status(204).send(); // No Content
+      res.status(204).send();
     } else {
       res.status(404).json({ message: "Request not found" });
     }

@@ -196,7 +196,7 @@ class RequestService {
       request.category_id = category_id;
       await request.save();
       const message = `
-          *Новая заявка для обработки*
+          Новая заявка для обработки
           Тип: ${request.request_type}
           Заголовок: ${request.title}
           Местоположение: ${request.location_detail}
@@ -205,7 +205,7 @@ class RequestService {
           Сложность: ${request.complexity ?? 'не указано'}
           Дата создания: ${new Date(request.created_date).toLocaleString()}
             
-          👉 Пожалуйста, перейдите в систему, чтобы принять заявку.
+          Пожалуйста, перейдите в систему, чтобы принять заявку.
       `.trim();
       NotificationService.sendNotification({
         userId: request.client_id,
@@ -280,18 +280,18 @@ class RequestService {
     await request.save();
 
     const message = `
-      *Вам назначена новая заявка!*
+      Вам назначена новая заявка!
       
-      📌 *Заголовок:* ${request.title}
-      📎 *Тип заявки:* ${request.request_type === 'normal' ? 'Обычная' : request.request_type === 'urgent' ? 'Срочная' : 'Плановая'}
-      📍 *Местоположение:* ${request.location_detail}
-      📝 *Описание:* ${request.description || '—'}
-      📂 *Категория:* ${request.category?.name ?? '—'}
-      📊 *Сложность:* ${request.complexity ?? 'не указана'}
-      ⏳ *SLA:* ${request.sla ?? 'не указано'}
-      🕒 *Дата создания:* ${new Date(request.created_date).toLocaleString()}
+      Заголовок: ${request.title}
+      Тип заявки: ${request.request_type === 'normal' ? 'Обычная' : request.request_type === 'urgent' ? 'Срочная' : 'Плановая'}
+      Местоположение: ${request.location_detail}
+      Описание: ${request.description || '—'}
+      Категория: ${request.category?.name ?? '—'}
+      Сложность: ${request.complexity ?? 'не указана'}
+      SLA: ${request.sla ?? 'не указано'}
+      Дата создания: ${new Date(request.created_date).toLocaleString()}
       
-      👉 Пожалуйста, перейдите в систему, чтобы принять заявку.
+      Пожалуйста, перейдите в систему, чтобы принять заявку.
       `.trim();
     NotificationService.sendNotification({
       userId: executor.user_id,
@@ -353,7 +353,7 @@ class RequestService {
     request.date_submitted = Date.now();
 
     const message = `
-      *Заявка:* ${request.title}
+      Заявка: ${request.title}
       `.trim();
 
     NotificationService.sendNotification({
@@ -382,7 +382,7 @@ class RequestService {
     request.comment = comment;
 
     const message = `
-      *Заявка:* ${request.title}
+      Заявка: ${request.title}
       
       Проверьте и оцените исполнителя в системе.
       `.trim();
@@ -391,7 +391,7 @@ class RequestService {
       userId: request.client_id,
       requestId: requestId,
       content: message,
-      type: 'start_request'
+      type: 'end_request'
     })
 
     return await request.save();
