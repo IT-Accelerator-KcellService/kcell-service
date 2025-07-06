@@ -140,13 +140,12 @@ class NotificationService {
                     }
                 });
                 notifTitle = "Админ принял заявку";
-                notifContent = `Админ принял заявку(${requestId}).`;
                 for (const depHead of department_heads) {
                     Notification.create({
                         user_id: depHead.id,
                         request_id: requestId,
                         title: notifTitle,
-                        content: notifContent,
+                        content: content,
                         is_read: false
                     });
 
@@ -171,6 +170,100 @@ class NotificationService {
                     from: process.env.SENDGRID_EMAIL_FROM,
                     subject: notifTitle,
                     text: notifContent
+                });
+                break;
+            case 'assigned':
+                notifTitle = "Вам назначили новую заявку!"
+                Notification.create({
+                    user_id: sender.id,
+                    request_id: requestId,
+                    title: notifTitle,
+                    content: content,
+                    is_read: false
+                });
+                sgMail.send({
+                    to: sender.email,
+                    from: process.env.SENDGRID_EMAIL_FROM,
+                    subject: notifTitle,
+                    text: content
+                });
+                break;
+            case 'start_request':
+                notifTitle = "Исполнитель начал исполнять заявку"
+
+                admins = await User.findAll({
+                    where: {
+                        role: 'admin-worker',
+                        office_id: sender.office_id
+                    }
+                });
+                for (const admin of admins) {
+                    Notification.create({
+                        user_id: admin.id,
+                        request_id: requestId,
+                        title: notifTitle,
+                        content: content,
+                        is_read: false
+                    });
+
+                    sgMail.send({
+                        to: admin.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: content
+                    });
+                }
+                Notification.create({
+                    user_id: sender.id,
+                    request_id: requestId,
+                    title: notifTitle,
+                    content: content,
+                    is_read: false
+                });
+                sgMail.send({
+                    to: sender.email,
+                    from: process.env.SENDGRID_EMAIL_FROM,
+                    subject: notifTitle,
+                    text: content
+                });
+                break;
+            case 'end_request':
+                notifTitle = "Исполнитель закончил исполнять заявку"
+
+                admins = await User.findAll({
+                    where: {
+                        role: 'admin-worker',
+                        office_id: sender.office_id
+                    }
+                });
+                for (const admin of admins) {
+                    Notification.create({
+                        user_id: admin.id,
+                        request_id: requestId,
+                        title: notifTitle,
+                        content: content,
+                        is_read: false
+                    });
+
+                    sgMail.send({
+                        to: admin.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: content
+                    });
+                }
+                Notification.create({
+                    user_id: sender.id,
+                    request_id: requestId,
+                    title: notifTitle,
+                    content: content,
+                    is_read: false
+                });
+                sgMail.send({
+                    to: sender.email,
+                    from: process.env.SENDGRID_EMAIL_FROM,
+                    subject: notifTitle,
+                    text: content
                 });
                 break;
             default:
