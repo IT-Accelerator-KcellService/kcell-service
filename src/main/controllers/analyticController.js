@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import {asyncHandler} from "../middleware/asyncHandler.js";
 import AnalyticService from "../services/analyticService.js";
+import StatisticsService from "../services/statisticsService.js";
 
 class AnalyticController {
 
@@ -45,6 +46,33 @@ class AnalyticController {
         res.setHeader('Content-Disposition', 'attachment; filename=analytics_template.pbix');
         return res.sendFile(templatePath);
     });
+
+    static getClientStats = asyncHandler(async (req, res) => {
+        const userId = req.user.id;
+        const data = await StatisticsService.getClientStats(userId);
+        res.json(data);
+    })
+
+    static getAdminWorkerStats = asyncHandler(async (req, res) => {
+        const data = await StatisticsService.getAdminWorkerStats();
+        res.json(data);
+    })
+
+    static getDepartmentHeadStats = asyncHandler(async (req, res) => {
+        const data = await StatisticsService.getDepartmentHeadStats();
+        res.json(data);
+    })
+
+    static getExecutorStats = asyncHandler(async (req, res) => {
+        const userId = req.user.id;
+        const data = await StatisticsService.getExecutorStats(userId);
+        res.json(data);
+    })
+
+    static getManagerStats = asyncHandler(async (req, res) => {
+        const data = await StatisticsService.getManagerStats();
+        res.json(data);
+    })
 }
 
 export default AnalyticController;
