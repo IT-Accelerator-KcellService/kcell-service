@@ -1,5 +1,5 @@
 import {col, fn, literal} from 'sequelize';
-import {Request, RequestRating} from '../models/init.js';
+import {Executor, Request, RequestRating} from '../models/init.js';
 
 class StatisticsService {
     static async getClientStats(userId) {
@@ -67,6 +67,9 @@ class StatisticsService {
     };
 
     static async getExecutorStats(userId) {
+        const executor = await Executor.findOne({
+            where: { user_id: userId },
+        });
         const [results] = await Request.findAll({
             attributes: [
                 [fn('COUNT', col('id')), 'total'],
@@ -77,7 +80,7 @@ class StatisticsService {
                 [fn('COUNT', literal(`CASE WHEN status = 'completed' AND actual_completion_date > created_date + sla::interval THEN 1 END`)), 'late'],
                 [fn('AVG', literal("EXTRACT(EPOCH FROM actual_completion_date - created_date) / 3600")), 'avgHours']
             ],
-            where: { executor_id: userId },
+            where: { executor_id: executor.id },
             raw: true
         });
 
