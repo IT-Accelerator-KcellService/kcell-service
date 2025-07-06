@@ -114,7 +114,7 @@ class NotificationService {
                         text: notifContent
                     });
                 }
-
+                this.sendNotificationToManagers(notifTitle, notifContent)
                 break;
             case 'reject_request':
                 notifTitle = "Заявка откланен";
@@ -132,6 +132,8 @@ class NotificationService {
                     subject: notifTitle,
                     text: content
                 });
+
+                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'awaiting_assignment':
                 department_heads = await User.findAll({
@@ -153,7 +155,7 @@ class NotificationService {
                         to: depHead.email,
                         from: process.env.SENDGRID_EMAIL_FROM,
                         subject: notifTitle,
-                        text: notifContent
+                        text: content
                     });
                 }
 
@@ -161,7 +163,7 @@ class NotificationService {
                     user_id: sender.id,
                     request_id: requestId,
                     title: notifTitle,
-                    content: notifContent,
+                    content: content,
                     is_read: false
                 });
 
@@ -169,8 +171,10 @@ class NotificationService {
                     to: sender.email,
                     from: process.env.SENDGRID_EMAIL_FROM,
                     subject: notifTitle,
-                    text: notifContent
+                    text: content
                 });
+
+                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'assigned':
                 notifTitle = "Вам назначили новую заявку!"
@@ -187,6 +191,8 @@ class NotificationService {
                     subject: notifTitle,
                     text: content
                 });
+
+                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'start_request':
                 notifTitle = "Исполнитель начал исполнять заявку"
@@ -226,6 +232,8 @@ class NotificationService {
                     subject: notifTitle,
                     text: content
                 });
+
+                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'end_request':
                 notifTitle = "Исполнитель закончил исполнять заявку"
@@ -265,9 +273,27 @@ class NotificationService {
                     subject: notifTitle,
                     text: content
                 });
+
+                this.sendNotificationToManagers(notifTitle, content)
                 break;
             default:
                 throw new Error(`Unknown notification type: ${type}`);
+        }
+    }
+
+    static async sendNotificationToManagers(title, content) {
+        const managers = await User.findAll({
+            where: {
+                role: 'manager'
+            }
+        });
+        for (const manager of managers) {
+            Notification.create({
+                user_id: manager.id,
+                title: title,
+                content: content,
+                is_read: false
+            });
         }
     }
 }
