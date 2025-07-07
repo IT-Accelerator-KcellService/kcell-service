@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 3001
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://kcell-service.vercel.app', 'https://savanoriu-workflow-service-front.vercel.app'],
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://kcell-service-front.vercel.app', 'https://savanoriu-workflow-service-front.vercel.app'],
   credentials: true
 }));
 app.use(express.json())
