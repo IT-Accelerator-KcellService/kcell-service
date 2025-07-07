@@ -114,7 +114,6 @@ class NotificationService {
                         text: notifContent
                     });
                 }
-                this.sendNotificationToManagers(notifTitle, notifContent)
                 break;
             case 'reject_request':
                 notifTitle = "Заявка откланен";
@@ -133,7 +132,6 @@ class NotificationService {
                     text: content
                 });
 
-                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'awaiting_assignment':
                 department_heads = await User.findAll({
@@ -174,7 +172,6 @@ class NotificationService {
                     text: content
                 });
 
-                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'assigned':
                 notifTitle = "Вам назначили новую заявку!"
@@ -192,7 +189,6 @@ class NotificationService {
                     text: content
                 });
 
-                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'start_request':
                 notifTitle = "Исполнитель начал исполнять заявку"
@@ -233,7 +229,6 @@ class NotificationService {
                     text: content
                 });
 
-                this.sendNotificationToManagers(notifTitle, content)
                 break;
             case 'end_request':
                 notifTitle = "Исполнитель закончил исполнять заявку"
@@ -274,7 +269,6 @@ class NotificationService {
                     text: content
                 });
 
-                this.sendNotificationToManagers(notifTitle, content)
                 break;
             default:
                 throw new Error(`Unknown notification type: ${type}`);
