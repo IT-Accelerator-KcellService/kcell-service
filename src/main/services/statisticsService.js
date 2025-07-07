@@ -113,7 +113,10 @@ class StatisticsService {
                 'office_id',
                 [fn('COUNT', col('id')), 'totalRequests'],
                 [fn('COUNT', literal(`CASE WHEN status = 'completed' THEN 1 END`)), 'completedRequests'],
-                [fn('COUNT', literal(`CASE WHEN request_type = 'urgent' AND status != 'completed' AND actual_completion_date > created_date + sla::interval THEN 1 END`)), 'overdueUrgentRequests']
+                [fn('COUNT', literal(`CASE WHEN request_type = 'urgent' AND status != 'completed' AND actual_completion_date > created_date + sla::interval THEN 1 END`)), 'overdueUrgentRequests'],
+                [fn('COUNT', literal(`CASE WHEN request_type = 'normal' THEN 1 END`)), 'normalRequests'],
+                [fn('COUNT', literal(`CASE WHEN request_type = 'urgent' THEN 1 END`)), 'urgentRequests'],
+                [fn('COUNT', literal(`CASE WHEN request_type = 'planned' THEN 1 END`)), 'plannedRequests']
             ],
             group: [fn('DATE', col('created_date')), 'office_id'],
             order: [[fn('DATE', col('created_date')), 'ASC']],
@@ -130,7 +133,10 @@ class StatisticsService {
             grouped[officeId][date] = {
                 totalRequests: parseInt(r.totalRequests, 10),
                 completedRequests: parseInt(r.completedRequests, 10),
-                overdueUrgentRequests: parseInt(r.overdueUrgentRequests, 10)
+                overdueUrgentRequests: parseInt(r.overdueUrgentRequests, 10),
+                normalRequests: parseInt(r.normalRequests, 10),
+                urgentRequests: parseInt(r.urgentRequests, 10),
+                plannedRequests: parseInt(r.plannedRequests, 10)
             };
         }
 
