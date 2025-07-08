@@ -1,6 +1,6 @@
 import {Executor, Office, User} from "../models/init.js"
 import {ForbiddenError, NotFoundError} from "../errors/errors.js";
-import {getHashedPassword, randomString} from "../utils/bcrypt/BCryptService.js";
+import {comparePassword, getHashedPassword, randomString} from "../utils/bcrypt/BCryptService.js";
 import logger from "../utils/winston/logger.js";
 import {sequelize} from "../config/database.js";
 import NotificationService from "./notificationService.js";
@@ -110,6 +110,19 @@ class UserService {
       throw new NotFoundError(`User not found`)
     }
     return deletedUser
+  }
+  static async changePassword(userId, currentPassword, newPassword) {
+    const user = await UserService.getUserById(userId);
+    if (!user) throw new Error('Пользователь не найден');
+
+    const isMatch = await comparePassword(currentPassword, user.password);
+    if (!isMatch) throw new Error('Текущий пароль неверный');
+
+    const hashedPassword = await getHashedPassword(newPassword);
+    user.password = hashedPassword;
+    await user.save();
+
+    return { message: 'Пароль успешно изменён' };
   }
 }
 

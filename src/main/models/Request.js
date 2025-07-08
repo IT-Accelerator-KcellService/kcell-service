@@ -33,6 +33,10 @@ export const Request = sequelize.define('Request', {
     executor_id: { type: DataTypes.INTEGER, references: { model: 'executors', key: 'id' } },
     actual_completion_date: DataTypes.DATE,
     rejection_reason: DataTypes.TEXT,
+    planned_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
     created_date: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

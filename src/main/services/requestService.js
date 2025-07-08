@@ -195,11 +195,23 @@ class RequestService {
       request.sla = sla;
       request.category_id = category_id;
       await request.save();
-
+      const message = `
+          Новая заявка для обработки
+          Тип: ${request.request_type}
+          Заголовок: ${request.title}
+          Местоположение: ${request.location_detail}
+          Описание: ${request.description ?? '—'}
+          SLA: ${request.sla ?? 'не указано'}
+          Сложность: ${request.complexity ?? 'не указано'}
+          Дата создания: ${new Date(request.created_date).toLocaleString()}
+            
+          Пожалуйста, перейдите в систему, чтобы принять заявку.
+      `.trim();
       NotificationService.sendNotification({
         userId: request.client_id,
         requestId: request.id,
-        type: 'awaiting_assignment'
+        type: 'awaiting_assignment',
+        content: message
       })
       return request;
     }
@@ -267,6 +279,27 @@ class RequestService {
     request.status = 'assigned';
     await request.save();
 
+    const message = `
+      Вам назначена новая заявка!
+      
+      Заголовок: ${request.title}
+      Тип заявки: ${request.request_type === 'normal' ? 'Обычная' : request.request_type === 'urgent' ? 'Срочная' : 'Плановая'}
+      Местоположение: ${request.location_detail}
+      Описание: ${request.description || '—'}
+      Категория: ${request.category?.name ?? '—'}
+      Сложность: ${request.complexity ?? 'не указана'}
+      SLA: ${request.sla ?? 'не указано'}
+      Дата создания: ${new Date(request.created_date).toLocaleString()}
+      
+      Пожалуйста, перейдите в систему, чтобы принять заявку.
+      `.trim();
+    NotificationService.sendNotification({
+      userId: executor.user_id,
+      requestId: requestId,
+      content: message,
+      type: 'assigned'
+    })
+
     return request;
   }
 
@@ -318,6 +351,17 @@ class RequestService {
     }
     request.status = 'execution';
     request.date_submitted = Date.now();
+
+    const message = `
+      Заявка: ${request.title}
+      `.trim();
+
+    NotificationService.sendNotification({
+      userId: request.client_id,
+      requestId: requestId,
+      content: message,
+      type: 'start_request'
+    })
     return await request.save();
   }
 
@@ -336,11 +380,24 @@ class RequestService {
     request.status = 'completed';
     request.actual_completion_date = Date.now();
     request.comment = comment;
+
+    const message = `
+      Заявка: ${request.title}
+      
+      Проверьте и оцените исполнителя в системе.
+      `.trim();
+
+    NotificationService.sendNotification({
+      userId: request.client_id,
+      requestId: requestId,
+      content: message,
+      type: 'end_request'
+    })
+
     return await request.save();
   }
 
   static async findByFilters(filters) {
-    console.log(filters);
     return await Request.findAll({ where: filters });
   }
 }

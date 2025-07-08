@@ -13,6 +13,7 @@ router.get(
   UserController.getAllUsers,
 )
 router.get("/me", authenticateToken, UserController.getUserMe)
+router.post('/change-password', authenticateToken, UserController.changePassword);
 router.get("/:id", authenticateToken, UserController.getUserById)
 router.post(
     "/",

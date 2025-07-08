@@ -17,6 +17,15 @@ class UserController {
     const user = await UserService.getUserById(id);
     res.json(user);
   });
+  static changePassword = asyncHandler(async (req, res) => {
+      const userId = req.user.id;
+      const { currentPassword, newPassword } = req.body;
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: 'Все поля обязательны' });
+      }
+      const result = await UserService.changePassword(userId, currentPassword, newPassword);
+      res.json(result);
+  });
   static createUser = asyncHandler(async (req, res) => {
     const id = req.user.id;
     const newUser = await UserService.createUser(id,req.body, req.user.role);

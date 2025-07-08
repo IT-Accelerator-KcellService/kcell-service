@@ -1,5 +1,7 @@
+import { Op } from "sequelize";
 import {asyncHandler} from "../middleware/asyncHandler.js";
 import AnalyticService from "../services/analyticService.js";
+import StatisticsService from "../services/statisticsService.js";
 
 class AnalyticController {
 
@@ -7,11 +9,19 @@ class AnalyticController {
         const { format = 'xlsx', office_id, from, to } = req.query;
 
         const filters = {};
-        if (office_id) filters.office_id = office_id;
+        if (office_id) {
+            const parsedOfficeId = parseInt(office_id, 10);
+            if (!isNaN(parsedOfficeId)) {
+                filters.office_id = parsedOfficeId;
+            }
+        }
         if (from || to) {
-            filters.created_date = {};
-            if (from) filters.created_date.$gte = new Date(from);
-            if (to) filters.created_date.$lte = new Date(to);
+            const dateFilter = {};
+            if (from) dateFilter[Op.gte] = new Date(from);
+            if (to) dateFilter[Op.lte] = new Date(to);
+            if (Object.keys(dateFilter).length > 0) {
+                filters.created_date = dateFilter;
+            }
         }
 
         if (format === 'xlsx') {
@@ -37,63 +47,32 @@ class AnalyticController {
         return res.sendFile(templatePath);
     });
 
-    // static emailAnalytics = asyncHandler(async (req, res) => {
-    //     const { emails = [] } = req.body;
-    //     if (!emails.length || emails.length > 3) {
-    //         return res.status(400).json({ message: '1 to 3 emails required' });
-    //     }
-    //
-    //     const data = await RequestService.find({});
-    //     const workbook = new ExcelJS.Workbook();
-    //     const sheet = workbook.addWorksheet('Analytics');
-    //
-    //     sheet.columns = [
-    //         { header: 'ID', key: 'id', width: 10 },
-    //         { header: 'Тип', key: 'request_type', width: 15 },
-    //         { header: 'Офис', key: 'office', width: 15 },
-    //         { header: 'Статус', key: 'status', width: 15 },
-    //         { header: 'Дата подачи', key: 'date_submitted', width: 20 },
-    //     ];
-    //
-    //     data.forEach(r => {
-    //         sheet.addRow({
-    //             id: r.id,
-    //             request_type: r.request_type,
-    //             office: r.office,
-    //             status: r.status,
-    //             date_submitted: r.date_submitted,
-    //         });
-    //     });
-    //
-    //     const buffer = await workbook.xlsx.writeBuffer();
-    //
-    //     const transporter = nodemailer.createTransport({
-    //         service: 'gmail',
-    //         auth: {
-    //             user: 'your_email@gmail.com',
-    //             pass: 'your_password_or_app_password',
-    //         },
-    //     });
-    //
-    //     const mailOptions = {
-    //         from: 'your_email@gmail.com',
-    //         to: emails.join(','),
-    //         subject: 'Отчет по заявкам',
-    //         text: 'В приложении файл с аналитикой.',
-    //         attachments: [
-    //             {
-    //                 filename: 'analytics.xlsx',
-    //                 content: buffer,
-    //                 contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    //             },
-    //         ],
-    //     };
-    //
-    //     transporter.sendMail(mailOptions, (err, info) => {
-    //         if (err) return res.status(500).json({ error: err.message });
-    //         res.json({ message: 'Отчет отправлен', info });
-    //     });
-    // })
+    static getClientStats = asyncHandler(async (req, res) => {
+        const userId = req.user.id;
+        const data = await StatisticsService.getClientStats(userId);
+        res.json(data);
+    })
+
+    static getAdminWorkerStats = asyncHandler(async (req, res) => {
+        const data = await StatisticsService.getAdminWorkerStats();
+        res.json(data);
+    })
+
+    static getDepartmentHeadStats = asyncHandler(async (req, res) => {
+        const data = await StatisticsService.getDepartmentHeadStats();
+        res.json(data);
+    })
+
+    static getExecutorStats = asyncHandler(async (req, res) => {
+        const userId = req.user.id;
+        const data = await StatisticsService.getExecutorStats(userId);
+        res.json(data);
+    })
+
+    static getManagerStats = asyncHandler(async (req, res) => {
+        const data = await StatisticsService.getManagerStats();
+        res.json(data);
+    })
 }
 
 export default AnalyticController;
