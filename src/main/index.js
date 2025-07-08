@@ -21,6 +21,7 @@ import logger from "./utils/winston/logger.js";
 import {processRequestsByCron} from "./services/aiRequestProcessor.js";
 import * as cron from "node-cron";
 import analyticRoutes from "./routes/analyticRoutes.js";
+import {authenticateToken} from "./middleware/authMiddleware.js";
 
 
 dotenv.config();
@@ -64,7 +65,7 @@ app.use("/api/request-photos", requestPhotoRoutes)
 app.use("/api/ratings", requestRatingRoutes)
 app.use("/api/comments", chatMessageRoutes)
 app.use("/api/notifications", notificationRoutes)
-app.use('/api/analytics', analyticRoutes);
+app.use('/api/analytics', authenticateToken, analyticRoutes);
 app.get('/loaderio-4a70b4ed5b728c02002be667ca03f516.txt', (req, res) => {
   res.send('loaderio-4a70b4ed5b728c02002be667ca03f516')
 })

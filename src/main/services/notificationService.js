@@ -76,105 +76,222 @@ class NotificationService {
     }
 
     static async sendNotification({ userId, requestId, type, content = null }) {
-        if (!userId || !type) {
-            throw new Error("Missing required fields: userId or type");
+        try {
+            if (!userId || !type) {
+                throw new Error("Missing required fields: userId or type");
+            }
+            const sender = await User.findByPk(userId);
+            let notifTitle;
+            let notifContent;
+            let admins;
+            let department_heads;
+            switch (type) {
+                case 'new_request':
+                    if (!sender || !sender.office_id) {
+                        throw new Error("Sender or office ID not found");
+                    }
+
+                    admins = await User.findAll({
+                        where: {
+                            role: 'admin-worker',
+                            office_id: sender.office_id
+                        }
+                    });
+                    notifTitle = "Новая заявка";
+                    notifContent = `Пользователь из вашего офиса создал новую заявку(${requestId}).`;
+                    for (const admin of admins) {
+                        Notification.create({
+                            user_id: admin.id,
+                            request_id: requestId,
+                            title: notifTitle,
+                            content: notifContent,
+                            is_read: false
+                        });
+
+                        sgMail.send({
+                            to: admin.email,
+                            from: process.env.SENDGRID_EMAIL_FROM,
+                            subject: notifTitle,
+                            text: notifContent
+                        });
+                    }
+                    break;
+                case 'reject_request':
+                    notifTitle = "Заявка откланен";
+
+                    await Notification.create({
+                        user_id: userId,
+                        title: notifTitle,
+                        content: content,
+                        is_read: false
+                    });
+
+                    await sgMail.send({
+                        to: sender.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: content
+                    });
+
+                    break;
+                case 'awaiting_assignment':
+                    department_heads = await User.findAll({
+                        where: {
+                            role: 'department-head'
+                        }
+                    });
+                    notifTitle = "Админ принял заявку";
+                    for (const depHead of department_heads) {
+                        Notification.create({
+                            user_id: depHead.id,
+                            request_id: requestId,
+                            title: notifTitle,
+                            content: content,
+                            is_read: false
+                        });
+
+                        sgMail.send({
+                            to: depHead.email,
+                            from: process.env.SENDGRID_EMAIL_FROM,
+                            subject: notifTitle,
+                            text: content
+                        });
+                    }
+
+                    Notification.create({
+                        user_id: sender.id,
+                        request_id: requestId,
+                        title: notifTitle,
+                        content: content,
+                        is_read: false
+                    });
+
+                    sgMail.send({
+                        to: sender.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: content
+                    });
+
+                    break;
+                case 'assigned':
+                    notifTitle = "Вам назначили новую заявку!"
+                    Notification.create({
+                        user_id: sender.id,
+                        request_id: requestId,
+                        title: notifTitle,
+                        content: content,
+                        is_read: false
+                    });
+                    sgMail.send({
+                        to: sender.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: content
+                    });
+
+                    break;
+                case 'start_request':
+                    notifTitle = "Исполнитель начал исполнять заявку"
+
+                    admins = await User.findAll({
+                        where: {
+                            role: 'admin-worker',
+                            office_id: sender.office_id
+                        }
+                    });
+                    for (const admin of admins) {
+                        Notification.create({
+                            user_id: admin.id,
+                            request_id: requestId,
+                            title: notifTitle,
+                            content: content,
+                            is_read: false
+                        });
+
+                        sgMail.send({
+                            to: admin.email,
+                            from: process.env.SENDGRID_EMAIL_FROM,
+                            subject: notifTitle,
+                            text: content
+                        });
+                    }
+                    Notification.create({
+                        user_id: sender.id,
+                        request_id: requestId,
+                        title: notifTitle,
+                        content: content,
+                        is_read: false
+                    });
+                    sgMail.send({
+                        to: sender.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: content
+                    });
+
+                    break;
+                case 'end_request':
+                    notifTitle = "Исполнитель закончил исполнять заявку"
+
+                    admins = await User.findAll({
+                        where: {
+                            role: 'admin-worker',
+                            office_id: sender.office_id
+                        }
+                    });
+                    for (const admin of admins) {
+                        Notification.create({
+                            user_id: admin.id,
+                            request_id: requestId,
+                            title: notifTitle,
+                            content: content,
+                            is_read: false
+                        });
+
+                        sgMail.send({
+                            to: admin.email,
+                            from: process.env.SENDGRID_EMAIL_FROM,
+                            subject: notifTitle,
+                            text: content
+                        });
+                    }
+                    Notification.create({
+                        user_id: sender.id,
+                        request_id: requestId,
+                        title: notifTitle,
+                        content: content,
+                        is_read: false
+                    });
+                    sgMail.send({
+                        to: sender.email,
+                        from: process.env.SENDGRID_EMAIL_FROM,
+                        subject: notifTitle,
+                        text: content
+                    });
+
+                    break;
+                default:
+                    throw new Error(`Unknown notification type: ${type}`);
+            }
+        } catch (error) {
+
         }
-        const sender = await User.findByPk(userId);
-        let notifTitle;
-        let notifContent;
-        let admins;
-        let department_heads;
-        switch (type) {
-            case 'new_request':
-                if (!sender || !sender.office_id) {
-                    throw new Error("Sender or office ID not found");
-                }
+    }
 
-                admins = await User.findAll({
-                    where: {
-                        role: 'admin-worker',
-                        office_id: sender.office_id
-                    }
-                });
-                notifTitle = "Новая заявка";
-                notifContent = `Пользователь из вашего офиса создал новую заявку(${requestId}).`;
-                for (const admin of admins) {
-                    Notification.create({
-                        user_id: admin.id,
-                        request_id: requestId,
-                        title: notifTitle,
-                        content: notifContent,
-                        is_read: false
-                    });
-
-                    sgMail.send({
-                        to: admin.email,
-                        from: process.env.SENDGRID_EMAIL_FROM,
-                        subject: notifTitle,
-                        text: notifContent
-                    });
-                }
-
-                break;
-            case 'reject_request':
-                notifTitle = "Заявка откланен";
-
-                await Notification.create({
-                    user_id: userId,
-                    title: notifTitle,
-                    content: content,
-                    is_read: false
-                });
-
-                await sgMail.send({
-                    to: sender.email,
-                    from: process.env.SENDGRID_EMAIL_FROM,
-                    subject: notifTitle,
-                    text: content
-                });
-                break;
-            case 'awaiting_assignment':
-                department_heads = await User.findAll({
-                    where: {
-                        role: 'department-head'
-                    }
-                });
-                notifTitle = "Админ принял заявку";
-                notifContent = `Админ принял заявку(${requestId}).`;
-                for (const depHead of department_heads) {
-                    Notification.create({
-                        user_id: depHead.id,
-                        request_id: requestId,
-                        title: notifTitle,
-                        content: notifContent,
-                        is_read: false
-                    });
-
-                    sgMail.send({
-                        to: depHead.email,
-                        from: process.env.SENDGRID_EMAIL_FROM,
-                        subject: notifTitle,
-                        text: notifContent
-                    });
-                }
-
-                Notification.create({
-                    user_id: sender.id,
-                    request_id: requestId,
-                    title: notifTitle,
-                    content: notifContent,
-                    is_read: false
-                });
-
-                sgMail.send({
-                    to: sender.email,
-                    from: process.env.SENDGRID_EMAIL_FROM,
-                    subject: notifTitle,
-                    text: notifContent
-                });
-                break;
-            default:
-                throw new Error(`Unknown notification type: ${type}`);
+    static async sendNotificationToManagers(title, content) {
+        const managers = await User.findAll({
+            where: {
+                role: 'manager'
+            }
+        });
+        for (const manager of managers) {
+            Notification.create({
+                user_id: manager.id,
+                title: title,
+                content: content,
+                is_read: false
+            });
         }
     }
 }

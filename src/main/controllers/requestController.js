@@ -54,7 +54,7 @@ class RequestController {
   static deleteRequest = asyncHandler(async (req, res) => {
     const deleted = await RequestService.deleteRequest(Number.parseInt(req.params.id));
     if (deleted) {
-      res.status(204).send(); // No Content
+      res.status(204).send();
     } else {
       res.status(404).json({ message: "Request not found" });
     }
@@ -105,7 +105,7 @@ class RequestController {
   static finishRequest = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const requestId = req.params.id;
-    const comment = req.comment;
+    const comment = req.body.comment;
     const data = await RequestService.finishRequest(requestId, userId, comment)
     res.status(200).json(data);
   });
