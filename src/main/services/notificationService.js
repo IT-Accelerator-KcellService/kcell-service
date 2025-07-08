@@ -275,7 +275,7 @@ class NotificationService {
                     throw new Error(`Unknown notification type: ${type}`);
             }
         } catch (error) {
-
+            console.error(error);
         }
     }
 
