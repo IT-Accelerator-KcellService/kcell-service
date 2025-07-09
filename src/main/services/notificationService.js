@@ -117,7 +117,7 @@ class NotificationService {
                     }
                     break;
                 case 'reject_request':
-                    notifTitle = "Заявка откланен";
+                    notifTitle = "Заявка отклонена";
 
                     await Notification.create({
                         user_id: userId,
